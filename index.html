@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Latince Ekinoks | Dickinson Latin Core & Logeion</title>
+  <meta name="description" content="İstanbul Üniversitesi Klasik Filoloji Latince Gramer 3 dersi için Dickinson Latin Core 1000 ve Logeion sözlüğüyle entegre Latince kelime ve flashcard çalışma platformu.">
+  <meta name="theme-color" content="#8c2d19">
+
+  <!-- Google Fonts for Classical Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cardo:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body class="mode-both">
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <!-- Branding -->
+      <a href="#" id="brandLogoLink" class="brand-section">
+        <div class="brand-icon">Æ</div>
+        <div class="brand-titles">
+          <span class="brand-title">Latince Ekinoks</span>
+          <span class="brand-subtitle">İ.Ü. Klasik Filoloji • Latince Gramer 3</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Tabs -->
+      <nav class="nav-tabs" aria-label="Ana Gezinti">
+        <button class="nav-tab active" data-view="dictionary">
+          <span>📚 Sözlük & Liste</span>
+        </button>
+        <button class="nav-tab" data-view="flashcard">
+          <span>🗂️ Flashcard</span>
+          <span class="nav-badge">20'li Setler</span>
+        </button>
+        <button class="nav-tab" data-view="goal">
+          <span>🎯 Dönem Hedefi</span>
+          <span class="nav-badge" style="background: var(--accent-subtle); color: var(--accent);">400 Kelime</span>
+        </button>
+        <button class="nav-tab" data-view="quiz">
+          <span>📝 Test / Quiz</span>
+        </button>
+        <button class="nav-tab" data-view="favorites">
+          <span>⭐ Zorlandıklarım</span>
+        </button>
+      </nav>
+
+      <!-- Language Visibility & Theme Actions -->
+      <div class="header-actions">
+        <!-- Dual Language View Switcher -->
+        <div class="lang-mode-picker" title="Anlam Gösterim Modu">
+          <button class="lang-btn" data-mode="tr" title="Yalnızca Türkçe Göster">🇹🇷 TR</button>
+          <button class="lang-btn" data-mode="en" title="Yalnızca İngilizce Göster">🇬🇧 EN</button>
+          <button class="lang-btn active" data-mode="both" title="Türkçe ve İngilizce Yan Yana Göster">🇹🇷+🇬🇧 Yan Yana</button>
+        </div>
+
+        <!-- Theme Toggle Button -->
+        <button id="themeToggleBtn" class="theme-toggle-btn" title="Tema Değiştir (Parşömen / Gece / Açık)">
+          📜
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Bottom Navigation Bar -->
+  <nav class="mobile-bottom-nav" aria-label="Mobil Gezinti">
+    <div class="bottom-nav-container">
+      <button class="bottom-nav-item active" data-view="dictionary">
+        <span class="nav-icon">📚</span>
+        <span>Sözlük</span>
+      </button>
+      <button class="bottom-nav-item" data-view="flashcard">
+        <span class="nav-icon">🗂️</span>
+        <span>Kartlar</span>
+      </button>
+      <button class="bottom-nav-item" data-view="goal">
+        <span class="nav-icon">🎯</span>
+        <span>Hedef 400</span>
+      </button>
+      <button class="bottom-nav-item" data-view="quiz">
+        <span class="nav-icon">📝</span>
+        <span>Test</span>
+      </button>
+      <button class="bottom-nav-item" data-view="favorites">
+        <span class="nav-icon">⭐</span>
+        <span>Favoriler</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Content Wrapper -->
+  <main class="main-wrapper">
+
+    <!-- Course & Methodology Context Banner -->
+    <div class="course-banner">
+      <div class="banner-content">
+        <div class="banner-icon">🏛️</div>
+        <div class="banner-text">
+          <h3>Ekin Öyken • Latince Gramer 3 Çalışma Rehberi</h3>
+          <p>Dickinson College (LASLA) en sık geçen 1000 kelime • Mert İnan & Emin Çomoğlu Türkçe çevirisi • Dönem sonu hedefi: <strong>İlk 400 kelime</strong></p>
+        </div>
+      </div>
+      <div class="banner-actions">
+        <button id="bannerGoGoalBtn" class="btn-secondary-sm">🎯 Hedef Takipçisi</button>
+        <button id="bannerAboutBtn" class="btn-secondary-sm">ℹ️ Kaynaklar & Rehber</button>
+      </div>
+    </div>
+
+    <!-- ====================================================================
+         VIEW 1: Sözlük & Liste (Dictionary View)
+         ==================================================================== -->
+    <section id="viewDictionary" class="view-panel active">
+      <!-- Filters and Search Card -->
+      <div class="filter-card">
+        <div class="search-row">
+          <div class="search-box-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="dictionarySearchInput" class="search-input" placeholder="Latince başlık, Türkçe anlam veya İngilizce karşılık ara (şapka/makron duyarsız)..." autocomplete="off">
+            <button id="clearSearchBtn" class="clear-search-btn" title="Temizle">✕</button>
+          </div>
+        </div>
+
+        <div class="filters-row">
+          <div class="filter-group">
+            <label for="posFilterSelect" class="filter-label">Sözcük Türü</label>
+            <select id="posFilterSelect" class="custom-select">
+              <option value="all">- Tümü (Sözcük Türleri) -</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="catFilterSelect" class="filter-label">Anlam Alanı (Semantik)</label>
+            <select id="catFilterSelect" class="custom-select">
+              <option value="all">- Tümü (Anlam Alanları) -</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="setFilterSelect" class="filter-label">20'li Set Filtresi</label>
+            <select id="setFilterSelect" class="custom-select">
+              <option value="all">- Tüm Setler (1 - 50) -</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="sortBySelect" class="filter-label">Sıralama Ölçütü</label>
+            <select id="sortBySelect" class="custom-select">
+              <option value="rank-asc">Sıklığa Göre (En Sık ➔ En Az: #1 - #997)</option>
+              <option value="rank-desc">Sıklığa Göre (En Az ➔ En Sık: #997 - #1)</option>
+              <option value="alpha-asc">Alfabetik (A ➔ Z)</option>
+              <option value="alpha-desc">Alfabetik (Z ➔ A)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Quick Filter Pills -->
+        <div class="filter-pills">
+          <span class="pill-label">Hızlı Filtreler:</span>
+          <button id="filterPillTarget" class="filter-pill">🎯 İlk 400 Kelime (Dönem Hedefi)</button>
+          <button class="filter-pill pos-quick-pill" data-pos="Fiil">Fiiller</button>
+          <button class="filter-pill pos-quick-pill" data-pos="İsim">İsimler</button>
+          <button class="filter-pill pos-quick-pill" data-pos="Sıfat">Sıfatlar</button>
+          <button class="filter-pill pos-quick-pill" data-pos="Edat">Edatlar</button>
+          <button class="filter-pill pos-quick-pill" data-pos="Bağlaç">Bağlaçlar</button>
+          <button id="resetFiltersBtn" class="filter-pill" style="margin-left: auto; color: var(--danger);">✕ Sıfırla</button>
+        </div>
+      </div>
+
+      <!-- Stats Bar -->
+      <div class="results-stats-bar">
+        <span id="resultsCountBadge" class="results-count">Yükleniyor...</span>
+      </div>
+
+      <!-- Words Grid -->
+      <div id="wordsGrid" class="words-grid"></div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 2: Flashcard (Bilgi Kartları)
+         ==================================================================== -->
+    <section id="viewFlashcard" class="view-panel">
+      <div class="flashcard-view-header">
+        <!-- Sets Horizontal Bar -->
+        <div class="sets-bar-container">
+          <div class="sets-bar-top">
+            <span class="sets-bar-title">🗂️ 20'şerli Çalışma Setleri (Sıklık Sırasına Göre 1-50):</span>
+            <span class="set-quick-meta">🎯 1 - 20 Arası Setler: 400 Kelimelik Dönem Hedefi</span>
+          </div>
+          <div id="setsScrollStrip" class="sets-scroll-strip"></div>
+        </div>
+
+        <!-- Flashcard Mode & Direction Controls -->
+        <div class="card-mode-controls">
+          <div class="direction-toggle">
+            <button id="dirLatToMean" class="direction-btn active">Latince ➔ Anlam</button>
+            <button id="dirMeanToLat" class="direction-btn">Anlam ➔ Latince</button>
+          </div>
+
+          <h3 id="currentSetTitle" style="font-family: var(--font-serif); font-size: 1.05rem; color: var(--primary);">
+            Set 1 (#1 - #20)
+          </h3>
+
+          <div class="card-extra-actions">
+            <button id="cardShuffleBtn" class="btn-secondary-sm" title="Kartları Karıştır">🔀 Karıştır</button>
+            <button id="startQuizFromSetBtn" class="btn-secondary-sm" title="Bu Setin Çoktan Seçmeli Testini Çöz">📝 Test Çöz</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Flashcard 3D Stage -->
+      <div class="flashcard-stage">
+        <div id="flashcardContainer" class="flashcard-container">
+          
+          <!-- Card Front Face -->
+          <div id="cardFaceFront" class="card-face card-front">
+            <div class="card-face-header">
+              <span id="cardStepBadge" class="card-step-badge">1 / 20</span>
+              <div class="word-card-actions">
+                <button id="cardAudioBtn" class="btn-icon-sm" title="Telaffuzu Dinle">🔊</button>
+                <button id="cardStarBtn" class="btn-icon-sm" title="Zorlandıklarıma Ekle">☆</button>
+              </div>
+            </div>
+
+            <div class="card-face-center">
+              <span id="cardStatusTag" class="tag-badge" style="margin-bottom: 0.5rem;">Yeni</span>
+              <div id="frontHeadword" class="card-headword">et</div>
+              <div id="frontGrammar" class="card-hint">Bağlaç • Bağlaç / Zarf</div>
+              <div id="frontPrompt" class="card-flip-prompt">Anlamı görmek için dokun veya boşluğa bas ↻</div>
+            </div>
+
+            <div class="card-face-footer">
+              <span>İpucu: Kartı çevirmek için tıkla</span>
+              <span>Dokunmatik: Sağa/Sola Kaydır</span>
+            </div>
+          </div>
+
+          <!-- Card Back Face -->
+          <div id="cardFaceBack" class="card-face card-back">
+            <div class="card-face-header">
+              <span id="backGrammarFull" class="tag-badge pos-tag">Bağlaç</span>
+              <div class="word-card-actions">
+                <a id="cardLogeionBtn" href="#" target="_blank" rel="noopener noreferrer" class="logeion-link-btn" title="Logeion Lewis & Short Sözlüğünde Aç">
+                  📖 Logeion ↗
+                </a>
+              </div>
+            </div>
+
+            <div class="card-face-center">
+              <div id="backHeadword" class="card-headword" style="font-size: 1.5rem; margin-bottom: 0.75rem;">et</div>
+              
+              <div class="card-definition-box">
+                <div class="card-def-item translation-tr">
+                  <div class="card-def-label">🇹🇷 Türkçe Anlam (Mert İnan & Emin Çomoğlu)</div>
+                  <div id="backDefTr" class="card-def-content tr-text">ve</div>
+                </div>
+
+                <div class="card-def-item translation-en">
+                  <div class="card-def-label">🇬🇧 İngilizce Anlam (Dickinson College)</div>
+                  <div id="backDefEn" class="card-def-content en-text">and</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-face-footer">
+              <span>Geri dönmek için tıkla ↻</span>
+              <span>Klavye: 1 = Biliyorum, 2 = Tekrar</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Set Progress Track -->
+      <div style="max-width: 680px; margin: 0 auto 0.85rem auto;">
+        <div id="cardSetProgress" class="set-progress-track">
+          <div id="cardSetFill" class="set-progress-fill" style="width: 5%;"></div>
+        </div>
+      </div>
+
+      <!-- Card Decision Bar -->
+      <div class="card-decision-bar">
+        <button id="cardPrevBtn" class="nav-card-btn" title="Önceki Kart (Sol Ok)">
+          <span>←</span> Önceki
+        </button>
+
+        <div class="decision-group">
+          <button id="cardRepeatBtn" class="btn-decision btn-repeat" title="Tekrar Listesine Ekle (2)">
+            <span>↻</span> Tekrar Et [2]
+          </button>
+          <button id="cardKnowBtn" class="btn-decision btn-know" title="Öğrendim Olarak İşaretle (1)">
+            <span>✓</span> Biliyorum [1]
+          </button>
+        </div>
+
+        <button id="cardNextBtn" class="nav-card-btn" title="Sonraki Kart (Sağ Ok)">
+          Sonraki <span>→</span>
+        </button>
+      </div>
+
+      <!-- Keyboard Shortcuts Info -->
+      <div class="keyboard-hints">
+        Klavye Kısayolları: <kbd>Boşluk</kbd> Çevir • <kbd>←</kbd>/<kbd>→</kbd> Önceki/Sonraki • <kbd>1</kbd> Biliyorum • <kbd>2</kbd> Tekrar • <kbd>S</kbd> Sesletim • <kbd>F</kbd> Yıldızla
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 3: Dönem Hedefi (İlk 400 Kelime)
+         ==================================================================== -->
+    <section id="viewGoal" class="view-panel">
+      <div class="goal-dashboard">
+        <div class="goal-hero-row">
+          <div class="goal-titles">
+            <h2>🎯 Latince Gramer 3 Dönem Hedefi</h2>
+            <p>
+              Dr. Öğr. Üyesi Ekin Öyken: <em>"En çok kullanılan ET, SUM, QUI gibi kelimelerden başlayarak listede aşağıya doğru, günde 10-15 kelimeyi hafızaya alırsanız, bu temel kelime bilgisini yaklaşık 3-4 ayda edinebilirsiniz. Dönem sonuna kadar hedefimiz 400 kelime."</em>
+            </p>
+          </div>
+
+          <div class="goal-progress-widget">
+            <div id="goalPercentNum" class="goal-percent">%0</div>
+            <div id="goalFractionText" class="goal-fraction">0 / 400 Kelime</div>
+            <div class="set-progress-track" style="margin-top: 0.65rem;">
+              <div id="goalOverallFill" class="set-progress-fill" style="width: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Statistics Grid -->
+        <div class="goal-stats-grid">
+          <div class="goal-stat-card">
+            <div class="goal-stat-label">Öğrenilen Hedef Kelime</div>
+            <div id="statTargetLearned" class="goal-stat-value" style="color: var(--success);">0</div>
+          </div>
+          <div class="goal-stat-card">
+            <div class="goal-stat-label">Kalan Kelime</div>
+            <div id="statTargetRemaining" class="goal-stat-value" style="color: var(--primary);">400</div>
+          </div>
+          <div class="goal-stat-card">
+            <div class="goal-stat-label">Tekrar Edilecekler</div>
+            <div id="statTargetRepeat" class="goal-stat-value" style="color: var(--warning);">0</div>
+          </div>
+          <div class="goal-stat-card">
+            <div class="goal-stat-label">Tavsiye Edilen Günlük Hız</div>
+            <div id="statDailyPace" class="goal-stat-value" style="color: var(--info);">10-15 kelime/gün</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family: var(--font-serif); font-size: 1.25rem; color: var(--primary); margin-bottom: 0.85rem;">
+        Dönem Hedefi Kapsamındaki Setler (Set 1 - 20)
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+        Doğrudan flashcard çalışmak için set kartına tıklayabilirsiniz:
+      </p>
+
+      <!-- Target Sets Grid -->
+      <div id="goalSetsGrid" class="words-grid" style="grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));"></div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 4: Quiz / Test Modu
+         ==================================================================== -->
+    <section id="viewQuiz" class="view-panel">
+      <div class="quiz-container">
+        <div class="quiz-header">
+          <div>
+            <h3 id="quizTitle" style="font-family: var(--font-serif); color: var(--primary);">Set 1 Testi</h3>
+            <span id="quizProgressBadge" style="font-size: 0.82rem; color: var(--text-muted);">Soru 1 / 20</span>
+          </div>
+          <span id="quizScoreBadge" class="quiz-score-badge">Skor: 0 Doğru</span>
+        </div>
+
+        <div id="quizMainContent">
+          <!-- Question Box -->
+          <div class="quiz-prompt-card">
+            <div class="quiz-question-type">Latince Sözcüğün Türkçe Karşılığını Seçin</div>
+            <div id="quizHeadword" class="quiz-lemma">et</div>
+            <div id="quizGrammar" class="quiz-grammar-hint">Bağlaç • Sıklık: #1</div>
+          </div>
+
+          <!-- Options List -->
+          <div id="quizOptionsList" class="quiz-options-list"></div>
+
+          <!-- Feedback Box -->
+          <div id="quizFeedbackBox" class="quiz-feedback-box" style="display: none;">
+            <div id="quizFeedbackText"></div>
+            <div style="display: flex; gap: 0.5rem; align-items: center;">
+              <a id="quizLogeionBtn" href="#" target="_blank" rel="noopener noreferrer" class="logeion-link-btn" title="Logeion'da İncele">
+                📖 Logeion ↗
+              </a>
+              <button id="quizNextBtn" class="btn-decision btn-know" style="padding: 0.55rem 1rem;">
+                Sonraki Soru ➔
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====================================================================
+         VIEW 5: Favoriler & Zorlandıklarım
+         ==================================================================== -->
+    <section id="viewFavorites" class="view-panel">
+      <div class="filter-card" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+        <div>
+          <h3 style="font-family: var(--font-serif); color: var(--primary); font-size: 1.25rem;">
+            ⭐ Zorlandıklarım & Tekrar Listesi
+          </h3>
+          <p id="favoritesCountBadge" style="font-size: 0.85rem; color: var(--text-muted);">
+            0 Yıldızlı • 0 Tekrar Listesinde
+          </p>
+        </div>
+        <button id="practiceFavoritesBtn" class="btn-decision btn-repeat">
+          🗂️ Bu Kelimeleri Flashcard ile Çalış
+        </button>
+      </div>
+
+      <div id="favoritesGrid" class="words-grid"></div>
+    </section>
+
+  </main>
+
+  <!-- About / Classroom Context Modal -->
+  <div id="aboutModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>🏛️ Proje Kaynakları & Çalışma Rehberi</h3>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4>Proje Hakkında</h4>
+        <p>
+          Bu platform, <strong>İstanbul Üniversitesi Edebiyat Fakültesi Eski Yunan Dili ve Edebiyatı Anabilim Dalı</strong> Latince Gramer 3 dersi (Dr. Öğr. Üyesi Ekin Öyken) için, klasik filoloji öğrencilerinin kelime dağarcığını kalıcı kılmak amacıyla geliştirilmiştir.
+        </p>
+
+        <h4>Veri Kaynakları</h4>
+        <ul>
+          <li>
+            <strong>Dickinson College Latin Core Vocabulary:</strong> 1960'larda Belçika'da kurulan LASLA (Laboratoire d'Analyse Statistique des Langues Anciennes) projesinin verileriyle klasik metinlerde en sık geçen ~1000 kelimeyi içerir.
+          </li>
+          <li>
+            <strong>Türkçe Çeviriler:</strong> İ.Ü. Eski Yunan Dili ve Edebiyatı mezunları <strong>Mert İnan</strong> ve <strong>Emin Çomoğlu</strong> tarafından Dickinson Commentaries için titizlikle hazırlanmıştır.
+          </li>
+          <li>
+            <strong>Logeion (Chicago Üniversitesi):</strong> Lewis & Short ve Gaffiot sözlüklerinin dijital veritabanıdır. Her kelimenin yanında bulunan "Logeion Sözlük" butonu sizi doğrudan sözlük maddesine götürür.
+          </li>
+        </ul>
+
+        <h4>Ekin Hoca'nın Tavsiye Ettiği Çalışma Metodu & Dönem Hedefi</h4>
+        <p>
+          Dr. Öğr. Üyesi Ekin Öyken'in belirttiği gibi; listedeki en az kullanılan kelime bile (<code>MUNDUS, -A, -UM</code> #997) Klasik Latince metinlerde görece sık kullanılan temel kelimelerdendir. Dolayısıyla en sık kullanılan <code>ET</code> (#1), <code>SUM</code> (#2), <code>QUI</code> (#3) gibi kelimelerden başlayarak listede aşağıya doğru, günde <strong>10-15 kelimeyi</strong> (Logeion üzerinden Lewis & Short sözlüğüne de bakarak) hafızaya alırsanız, bu temel kelime bilgisini yaklaşık 3-4 ayda edinebilirsiniz. <strong>Dönem sonuna kadar hedefimiz ilk 400 kelimedir (Set 1 - 20).</strong>
+        </p>
+
+        <h4>📖 Logeion (Lewis & Short) Sözlüğü Nasıl Kullanılmalı?</h4>
+        <p>
+          Her kelime kartında ve listede bulunan <span class="logeion-link-btn" style="display:inline-flex; padding: 2px 6px;">📖 Logeion ↗</span> butonuna tıklayarak Chicago Üniversitesi'nin dijital <strong>Lewis & Short</strong> sözlük maddesine doğrudan erişebilirsiniz. Yalnızca kelimenin temel anlamına değil; fiillerin aldığı hallere (örneğin <em>utor</em> fiilinin ablativus alması gibi), edebi metinlerdeki örnek cümlelere ve deyimsel kullanımlara bakmanız filolojik kavrayışınızı pekiştirecektir.
+        </p>
+
+        <h4>💡 Latince Ekinoks'tan En Verimli Şekilde Yararlanma İpuçları</h4>
+        <ul>
+          <li>
+            <strong>Çift Dilli Kıyas:</strong> Sağ üstteki <code>🇹🇷+🇬🇧 Yan Yana</code> görünümünü kullanarak Türkçe ve İngilizce karşılıkları birlikte inceleyin. İngilizce çevirideki nüanslar bazen metin çevirilerinde zihninizi açacaktır.
+          </li>
+          <li>
+            <strong>Çift Yönlü Flashcard:</strong> Önce <em>Latince ➔ Anlam</em> yönünde kartları tanıyın; ardından <em>Anlam ➔ Latince</em> yönüne geçip Latince kökleri ve çekimleri zihninizden getirmeye çalışarak aktif belleğinizi geliştirin.
+          </li>
+          <li>
+            <strong>Klavye ile Hızlı Çalışma:</strong> Masaüstünde çalışırken fare yerine <kbd>Boşluk</kbd> (çevir), <kbd>1</kbd> (biliyorum), <kbd>2</kbd> (tekrar) ve <kbd>S</kbd> (sesletim) kısayollarını kullanarak saniyeler içinde onlarca kelimeyi tarayabilirsiniz.
+          </li>
+          <li>
+            <strong>Zorlandıklarını Yıldızla:</strong> Ezberlemekte güçlük çektiğiniz kelimelerin yıldızına (<code>★</code>) dokunarak onları <em>⭐ Zorlandıklarım</em> havuzuna ekleyin ve vize/final öncesinde yalnızca bu desteyi çalışın.
+          </li>
+          <li>
+            <strong>Set Testleri (Quiz):</strong> Her 20'li seti tamamladıktan sonra <em>Test Çöz</em> butonuna basarak aynı sözcük türünden oluşturulan 4 şıklı mini sınavla kendinizi ölçün.
+          </li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-decision btn-know modal-close-btn">Anladım</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Footer -->
+  <footer class="app-footer">
+    <div class="footer-container">
+      <div>
+        <strong>Latince Ekinoks</strong> — İstanbul Üniversitesi Klasik Filoloji Öğrencileri İçin Dijital Latince Çalışma Platformu
+      </div>
+      <div class="footer-links">
+        <a href="https://dcc.dickinson.edu/latin-core-list1?order=field_frequency_rank&sort=asc" target="_blank" rel="noopener noreferrer">Dickinson Latin Core ↗</a>
+        <a href="https://logeion.uchicago.edu/" target="_blank" rel="noopener noreferrer">Logeion Dictionary ↗</a>
+        <a href="https://dcc.dickinson.edu/tr/latin-core-list1" target="_blank" rel="noopener noreferrer">Mert İnan & Emin Çomoğlu Çevirisi ↗</a>
+      </div>
+      <div style="font-size: 0.75rem; color: var(--text-light); margin-top: 0.35rem;">
+        LASLA & Dickinson College Commentaries (CC BY-SA 3.0) verileriyle hazırlanmıştır.
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="data/latin_core_data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/data-manager.js"></script>
+  <script src="js/flashcard.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

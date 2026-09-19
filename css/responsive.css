@@ -1,0 +1,221 @@
+/* Latince Ekinoks - Responsive Breakpoints & Mobile Optimization */
+
+/* Mobile Bottom Navigation Bar (Hidden on Desktop) */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-color);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08);
+  z-index: 150;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.68rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.bottom-nav-item .nav-icon {
+  font-size: 1.25rem;
+}
+
+.bottom-nav-item.active {
+  color: var(--primary);
+}
+
+/* Tablet & Smaller Desktop Adjustments */
+@media (max-width: 1024px) {
+  .words-grid {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
+  
+  .goal-hero-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile Devices (<= 768px) */
+@media (max-width: 768px) {
+  :root {
+    --header-height: 60px;
+  }
+  
+  body {
+    padding-bottom: calc(var(--bottom-nav-height) + env(safe-area-inset-bottom) + 1rem);
+  }
+  
+  /* Show Mobile Bottom Nav, Hide Desktop Header Nav */
+  .mobile-bottom-nav {
+    display: flex;
+  }
+  
+  .nav-tabs {
+    display: none;
+  }
+  
+  .header-container {
+    padding: 0.5rem 0.85rem;
+  }
+  
+  .brand-title {
+    font-size: 1.1rem;
+  }
+  
+  .brand-subtitle {
+    display: none;
+  }
+  
+  .brand-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.15rem;
+  }
+  
+  .lang-btn {
+    padding: 0.3rem 0.45rem;
+    font-size: 0.72rem;
+  }
+  
+  .main-wrapper {
+    padding: 0.75rem 0.75rem 2rem 0.75rem;
+  }
+  
+  /* Filter Area Mobile Tweaks */
+  .filter-card {
+    padding: 0.9rem;
+    border-radius: var(--radius-md);
+  }
+  
+  .filters-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .filter-group {
+    min-width: 100%;
+  }
+  
+  /* Words Grid on Mobile */
+  .words-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  /* Flashcard Mobile Adaptation */
+  .flashcard-stage {
+    min-height: 330px;
+    margin: 0.75rem auto 1rem auto;
+  }
+  
+  .flashcard-container {
+    height: 330px;
+  }
+  
+  .card-face {
+    padding: 1.25rem 1.15rem;
+  }
+  
+  .card-headword {
+    font-size: 1.6rem;
+  }
+  
+  .card-def-content {
+    font-size: 0.95rem;
+  }
+  
+  .card-decision-bar {
+    gap: 0.4rem;
+  }
+  
+  .nav-card-btn {
+    padding: 0.55rem 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .btn-decision {
+    padding: 0.55rem 0.85rem;
+    font-size: 0.8rem;
+  }
+  
+  .keyboard-hints {
+    display: none; /* Mobile has no physical keyboard */
+  }
+  
+  /* Quiz Mobile Adaptation */
+  .quiz-container {
+    padding: 1.15rem;
+    border-radius: var(--radius-md);
+  }
+  
+  .quiz-lemma {
+    font-size: 1.45rem;
+  }
+  
+  .quiz-option-btn {
+    padding: 0.75rem 0.9rem;
+    font-size: 0.88rem;
+  }
+  
+  /* Banner adjustments */
+  .course-banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .banner-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  /* Footer adjustments */
+  .app-footer {
+    margin-top: 1rem;
+    padding-bottom: 3.5rem;
+  }
+}
+
+/* Print Stylesheet (Clean flashcards or word list for physical study) */
+@media print {
+  .app-header,
+  .mobile-bottom-nav,
+  .filter-card,
+  .card-decision-bar,
+  .app-footer,
+  .course-banner {
+    display: none !important;
+  }
+  
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  
+  .word-card {
+    page-break-inside: avoid;
+    border: 1px solid #ccc !important;
+    box-shadow: none !important;
+  }
+}
