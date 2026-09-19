@@ -173,6 +173,9 @@ const FlashcardApp = (function () {
     StorageManager.setLearned(word.id, true);
     renderCard();
     updateSetPillsUI();
+    if (window.App && App.syncWordLearnState) {
+      App.syncWordLearnState(word.id, true);
+    }
     // Advance to next card smoothly
     setTimeout(() => nextCard(), 200);
   }
@@ -183,6 +186,9 @@ const FlashcardApp = (function () {
     StorageManager.setRepeat(word.id, true);
     renderCard();
     updateSetPillsUI();
+    if (window.App && App.syncWordLearnState) {
+      App.syncWordLearnState(word.id, false);
+    }
     // Advance to next card smoothly
     setTimeout(() => nextCard(), 200);
   }
@@ -190,8 +196,11 @@ const FlashcardApp = (function () {
   function toggleStarCurrent() {
     if (deck.length === 0) return;
     const word = deck[currentIndex];
-    StorageManager.toggleStarred(word.id);
+    const newState = StorageManager.toggleStarred(word.id);
     renderCard();
+    if (window.App && App.syncWordStarState) {
+      App.syncWordStarState(word.id, newState);
+    }
   }
 
   function shuffleDeck() {
@@ -366,6 +375,7 @@ const FlashcardApp = (function () {
     markRepeat,
     shuffleDeck,
     getActiveSetNo: () => activeSetNo,
+    getCurrentWordId: () => (deck[currentIndex] ? deck[currentIndex].id : null),
     updateSetPillsUI
   };
 })();

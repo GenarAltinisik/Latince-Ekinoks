@@ -96,7 +96,9 @@ const App = (function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     // Custom view hooks
-    if (viewName === 'goal') {
+    if (viewName === 'dictionary') {
+      syncDictionaryCardsState();
+    } else if (viewName === 'goal') {
       renderGoalDashboard();
     } else if (viewName === 'favorites') {
       renderFavoritesView();
@@ -313,6 +315,61 @@ const App = (function () {
     `;
   }
 
+  function syncWordStarState(wordId, isStarred) {
+    document.querySelectorAll(`.btn-star[data-id="${wordId}"]`).forEach(btn => {
+      btn.classList.toggle('starred', isStarred);
+      btn.textContent = isStarred ? '★' : '☆';
+    });
+
+    const cardStarBtn = document.getElementById('cardStarBtn');
+    if (cardStarBtn && FlashcardApp.getCurrentWordId && FlashcardApp.getCurrentWordId() === wordId) {
+      cardStarBtn.classList.toggle('starred', isStarred);
+      cardStarBtn.innerHTML = isStarred ? '★' : '☆';
+    }
+
+    updateFavoritesCountBadge();
+  }
+
+  function syncWordLearnState(wordId, isLearned) {
+    document.querySelectorAll(`.btn-learn[data-id="${wordId}"]`).forEach(btn => {
+      btn.classList.toggle('learned', isLearned);
+      btn.textContent = isLearned ? '✓' : '○';
+    });
+
+    FlashcardApp.updateSetPillsUI();
+    updateFavoritesCountBadge();
+  }
+
+  function syncDictionaryCardsState() {
+    const cards = document.querySelectorAll('#wordsGrid .word-card');
+    cards.forEach(card => {
+      const id = parseInt(card.dataset.id, 10);
+      const starBtn = card.querySelector('.btn-star');
+      const learnBtn = card.querySelector('.btn-learn');
+
+      if (starBtn) {
+        const isStarred = StorageManager.isStarred(id);
+        starBtn.classList.toggle('starred', isStarred);
+        starBtn.textContent = isStarred ? '★' : '☆';
+      }
+
+      if (learnBtn) {
+        const isLearned = StorageManager.isLearned(id);
+        learnBtn.classList.toggle('learned', isLearned);
+        learnBtn.textContent = isLearned ? '✓' : '○';
+      }
+    });
+  }
+
+  function updateFavoritesCountBadge() {
+    const badge = document.getElementById('favoritesCountBadge');
+    if (badge) {
+      const starredCount = StorageManager.getStarredCount();
+      const repeatCount = StorageManager.getRepeatCount();
+      badge.textContent = `${starredCount} Yıldızlı • ${repeatCount} Tekrar Listesinde`;
+    }
+  }
+
   function attachWordCardEvents(container) {
     // Star toggle
     container.querySelectorAll('.btn-star').forEach(btn => {
@@ -320,8 +377,7 @@ const App = (function () {
         e.stopPropagation();
         const id = parseInt(btn.dataset.id, 10);
         const state = StorageManager.toggleStarred(id);
-        btn.classList.toggle('starred', state);
-        btn.textContent = state ? '★' : '☆';
+        syncWordStarState(id, state);
       });
     });
 
@@ -331,9 +387,7 @@ const App = (function () {
         e.stopPropagation();
         const id = parseInt(btn.dataset.id, 10);
         const state = StorageManager.toggleLearned(id);
-        btn.classList.toggle('learned', state);
-        btn.textContent = state ? '✓' : '○';
-        FlashcardApp.updateSetPillsUI();
+        syncWordLearnState(id, state);
       });
     });
 
@@ -610,7 +664,9 @@ const App = (function () {
     openModal,
     closeAllModals,
     renderDictionaryList,
-    renderGoalDashboard
+    renderGoalDashboard,
+    syncWordStarState,
+    syncWordLearnState
   };
 })();
 
