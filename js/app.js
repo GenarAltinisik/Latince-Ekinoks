@@ -104,6 +104,11 @@ const App = (function () {
       renderFavoritesView();
     } else if (viewName === 'flashcard') {
       FlashcardApp.updateSetPillsUI();
+    } else if (viewName === 'quiz') {
+      if (!QuizEngine.hasActiveQuiz()) {
+        const activeSet = FlashcardApp.getActiveSetNo() || StorageManager.getActiveSet() || 1;
+        QuizEngine.startQuizForSet(activeSet);
+      }
     }
   }
 
@@ -550,8 +555,8 @@ const App = (function () {
     // Quiz Set Selector trigger
     document.getElementById('startQuizFromSetBtn')?.addEventListener('click', () => {
       const activeSet = FlashcardApp.getActiveSetNo();
-      switchView('quiz');
       QuizEngine.startQuizForSet(activeSet);
+      switchView('quiz');
     });
   }
 

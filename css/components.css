@@ -853,6 +853,36 @@ body.mode-en .translation-tr {
   box-shadow: var(--shadow-md);
 }
 
+.quiz-controls-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-surface-soft);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+}
+
+.quiz-control-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.quiz-control-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.quiz-select {
+  padding: 0.45rem 0.65rem;
+  font-size: 0.82rem;
+}
+
 .quiz-header {
   display: flex;
   justify-content: space-between;

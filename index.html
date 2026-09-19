@@ -369,18 +369,42 @@
          ==================================================================== -->
     <section id="viewQuiz" class="view-panel">
       <div class="quiz-container">
-        <div class="quiz-header">
-          <div>
-            <h3 id="quizTitle" style="font-family: var(--font-serif); color: var(--primary);">Set 1 Testi</h3>
-            <span id="quizProgressBadge" style="font-size: 0.82rem; color: var(--text-muted);">Soru 1 / 20</span>
+        <!-- Quiz Control Bar -->
+        <div class="quiz-controls-bar">
+          <div class="quiz-control-group">
+            <label for="quizSetSelect" class="quiz-control-label">Çalışma Seti:</label>
+            <select id="quizSetSelect" class="custom-select quiz-select">
+              <!-- Dynamically populated in quiz.js -->
+            </select>
           </div>
-          <span id="quizScoreBadge" class="quiz-score-badge">Skor: 0 Doğru</span>
+
+          <div class="quiz-control-group">
+            <label for="quizDirectionSelect" class="quiz-control-label">Soru Yönü:</label>
+            <select id="quizDirectionSelect" class="custom-select quiz-select">
+              <option value="lat_to_tr">Latince ➔ Türkçe</option>
+              <option value="lat_to_en">Latince ➔ İngilizce</option>
+              <option value="mean_to_lat">Anlam ➔ Latince</option>
+            </select>
+          </div>
+
+          <button id="quizRestartBtn" class="btn-secondary-sm" style="margin-left: auto;" title="Testi Yeniden Başlat">
+            ↻ Testi Yenile
+          </button>
         </div>
 
-        <div id="quizMainContent">
+        <!-- Active Question Area -->
+        <div id="quizQuestionArea">
+          <div class="quiz-header">
+            <div>
+              <h3 id="quizTitle" style="font-family: var(--font-serif); color: var(--primary);">Set 1 Testi</h3>
+              <span id="quizProgressBadge" style="font-size: 0.82rem; color: var(--text-muted);">Soru 1 / 20</span>
+            </div>
+            <span id="quizScoreBadge" class="quiz-score-badge">Skor: 0 Doğru</span>
+          </div>
+
           <!-- Question Box -->
           <div class="quiz-prompt-card">
-            <div class="quiz-question-type">Latince Sözcüğün Türkçe Karşılığını Seçin</div>
+            <div id="quizQuestionType" class="quiz-question-type">Latince Sözcüğün Türkçe Karşılığını Seçin</div>
             <div id="quizHeadword" class="quiz-lemma">et</div>
             <div id="quizGrammar" class="quiz-grammar-hint">Bağlaç • Sıklık: #1</div>
           </div>
@@ -391,7 +415,7 @@
           <!-- Feedback Box -->
           <div id="quizFeedbackBox" class="quiz-feedback-box" style="display: none;">
             <div id="quizFeedbackText"></div>
-            <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
               <a id="quizLogeionBtn" href="#" target="_blank" rel="noopener noreferrer" class="logeion-link-btn" title="Logeion'da İncele">
                 📖 Logeion ↗
               </a>
@@ -400,6 +424,24 @@
               </button>
             </div>
           </div>
+        </div>
+
+        <!-- Results Area (Hidden during quiz) -->
+        <div id="quizResultsArea" style="display: none;"></div>
+
+        <!-- Empty State Area (for empty favorites) -->
+        <div id="quizEmptyArea" style="display: none; text-align: center; padding: 2.5rem 1rem;">
+          <div style="font-size: 2.5rem; margin-bottom: 0.75rem;">⭐</div>
+          <h3 style="font-family: var(--font-serif); color: var(--primary); margin-bottom: 0.5rem;">Zorlandığınız Kelime Bulunmuyor</h3>
+          <p style="color: var(--text-muted); max-width: 440px; margin: 0 auto 1.5rem auto; font-size: 0.9rem;">
+            Henüz yıldızlanan (★) veya tekrara bırakılan bir kelime yok. Sözlükten veya kartlardan kelimeleri yıldızlayarak kendinize özel test hazırlayabilirsiniz.
+          </p>
+          <button id="quizEmptyBackBtn" class="btn-decision btn-know">Set 1 Testine Başla</button>
+        </div>
+
+        <!-- Quiz Keyboard Info -->
+        <div class="keyboard-hints" style="margin-top: 1.25rem;">
+          Klavye: <kbd>A</kbd>/<kbd>1</kbd>, <kbd>B</kbd>/<kbd>2</kbd>, <kbd>C</kbd>/<kbd>3</kbd>, <kbd>D</kbd>/<kbd>4</kbd> Şık Seçimi • <kbd>Boşluk</kbd> / <kbd>Enter</kbd> Sonraki Soru
         </div>
       </div>
     </section>
