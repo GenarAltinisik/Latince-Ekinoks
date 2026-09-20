@@ -376,6 +376,19 @@ const LATIN_REFERENCE_PARADIGMS = {
       }
     },
     {
+      id: 'verb_coniug_3_io',
+      title: '3. Çekim -iō Fiil (Coniugatio III -iō)',
+      model: 'capiō, capere, cēpī, captum (almak, yakalamak)',
+      tenses: {
+        praesens_act: { name: 'Praesens', p1s: 'capiō', p2s: 'capis', p3s: 'capit', p1p: 'capimus', p2p: 'capitis', p3p: 'capiunt' },
+        imperfectum_act: { name: 'Imperfectum', p1s: 'capiēbam', p2s: 'capiēbās', p3s: 'capiēbat', p1p: 'capiēbāmus', p2p: 'capiēbātis', p3p: 'capiēbant' },
+        futurum_act: { name: 'Futurum I (-iam, -iēs, -iet...)', p1s: 'capiam', p2s: 'capiēs', p3s: 'capiet', p1p: 'capiēmus', p2p: 'capiētis', p3p: 'capient' },
+        perfectum_act: { name: 'Perfectum', p1s: 'cēpī', p2s: 'cēpistī', p3s: 'cēpit', p1p: 'cēpimus', p2p: 'cēpistis', p3p: 'cēpērunt' },
+        plusquamperfectum_act: { name: 'Plusquamperfectum', p1s: 'cēperam', p2s: 'cēperās', p3s: 'cēperat', p1p: 'cēperāmus', p2p: 'cēperātis', p3p: 'cēperant' },
+        futurum_perf_act: { name: 'Futurum II', p1s: 'cēperō', p2s: 'cēperis', p3s: 'cēperit', p1p: 'cēperimus', p2p: 'cēperitis', p3p: 'cēperint' }
+      }
+    },
+    {
       id: 'verb_coniug_4',
       title: '4. Çekim Fiil (Coniugatio IV) -īre',
       model: 'audiō, audīre, audīvī, audītum (duymak, işitmek)',
