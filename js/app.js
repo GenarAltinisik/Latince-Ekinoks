@@ -104,6 +104,8 @@ const App = (function () {
       renderFavoritesView();
     } else if (viewName === 'flashcard') {
       FlashcardApp.updateSetPillsUI();
+    } else if (viewName === 'paradigms') {
+      renderPageParadigmsContent();
     } else if (viewName === 'quiz') {
       if (!QuizEngine.hasActiveQuiz()) {
         const activeSet = FlashcardApp.getActiveSetNo() || StorageManager.getActiveSet() || 1;
@@ -699,6 +701,27 @@ const App = (function () {
     body.innerHTML = InflectionEngine.renderReferenceCategoryHtml(activeReferenceCategory, caseOrder);
   }
 
+  let activePageCategory = 'nouns';
+
+  function renderPageParadigmsContent() {
+    const body = document.getElementById('pageParadigmsBody');
+    if (!body) return;
+
+    const caseOrder = StorageManager.getCaseOrder();
+
+    // Update case order buttons in page view
+    document.querySelectorAll('#pageCaseOrderButtons .case-order-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.order === caseOrder);
+    });
+
+    // Update category pills in page view
+    document.querySelectorAll('#pageCategoryPills .filter-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.cat === activePageCategory);
+    });
+
+    body.innerHTML = InflectionEngine.renderReferenceCategoryHtml(activePageCategory, caseOrder);
+  }
+
   // Modal setup
   function setupModals() {
     document.querySelectorAll('.modal-close-btn, .modal-overlay').forEach(el => {
@@ -709,9 +732,32 @@ const App = (function () {
       });
     });
 
-    // Banner Çekim Rehberi button
+    // Banner Çekim Rehberi button -> switches to paradigms page
     document.getElementById('bannerParadigmsBtn')?.addEventListener('click', () => {
-      openReferenceParadigmsModal('nouns');
+      switchView('paradigms');
+    });
+
+    // Word modal shortcut to full paradigms page
+    document.getElementById('inflectionGoParadigmsBtn')?.addEventListener('click', () => {
+      closeAllModals();
+      switchView('paradigms');
+    });
+
+    // Page paradigms case order buttons
+    document.querySelectorAll('#pageCaseOrderButtons .case-order-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const order = btn.dataset.order;
+        StorageManager.setCaseOrder(order);
+        renderPageParadigmsContent();
+      });
+    });
+
+    // Page paradigms category pills
+    document.querySelectorAll('#pageCategoryPills .filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        activePageCategory = pill.dataset.cat;
+        renderPageParadigmsContent();
+      });
     });
 
     // Word modal case order buttons
@@ -757,6 +803,7 @@ const App = (function () {
     closeAllModals,
     openWordInflectionModal,
     openReferenceParadigmsModal,
+    renderPageParadigmsContent,
     renderDictionaryList,
     renderGoalDashboard,
     syncWordStarState,

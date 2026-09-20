@@ -12,9 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Gentium+Plus:ital,wght@0,400;0,700;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Cardo:ital,wght@0,400;0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- CSS Stylesheets -->
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/components.css">
-  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/style.css?v=2.2">
+  <link rel="stylesheet" href="css/components.css?v=2.2">
+  <link rel="stylesheet" href="css/responsive.css?v=2.2">
 
   <!-- Privacy-friendly Web Analytics (GoatCounter) -->
   <script data-goatcounter="https://genaraltinisik.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
@@ -41,6 +41,9 @@
         <button class="nav-tab" data-view="flashcard">
           <span>🗂️ Flashcard</span>
           <span class="nav-badge">20'li Setler</span>
+        </button>
+        <button class="nav-tab" data-view="paradigms">
+          <span>📜 Çekim Tabloları</span>
         </button>
         <button class="nav-tab" data-view="goal">
           <span>🎯 Dönem Hedefi</span>
@@ -81,6 +84,10 @@
       <button class="bottom-nav-item" data-view="flashcard">
         <span class="nav-icon">🗂️</span>
         <span>Kartlar</span>
+      </button>
+      <button class="bottom-nav-item" data-view="paradigms">
+        <span class="nav-icon">📜</span>
+        <span>Çekimler</span>
       </button>
       <button class="bottom-nav-item" data-view="goal">
         <span class="nav-icon">🎯</span>
@@ -472,6 +479,47 @@
       <div id="favoritesGrid" class="words-grid"></div>
     </section>
 
+    <!-- ====================================================================
+         VIEW 6: Model Çekim Tabloları (Paradigms View)
+         ==================================================================== -->
+    <section id="viewParadigms" class="view-panel">
+      <div class="filter-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+          <div>
+            <h3 style="font-family: var(--font-serif); color: var(--primary); font-size: 1.25rem; margin: 0 0 0.25rem 0;">
+              📜 Latince Model Çekim Tabloları (Paradigms)
+            </h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">
+              1-5. İsim Çekimleri (Declinatio), Sıfatlar, Zamirler, 1-4. Fiil Çekimleri (Coniugatio) ve Düzensiz Çekimler
+            </p>
+          </div>
+          <!-- Case Order Selector -->
+          <div class="case-order-picker-wrap">
+            <span class="case-order-label">İsim Hali Sırası:</span>
+            <div class="case-order-buttons" id="pageCaseOrderButtons">
+              <button class="case-order-btn active" data-order="NVGDAcAb" title="Nominativus, Vocativus, Genetivus, Dativus, Accusativus, Ablativus">NVGDAcAb (Varsayılan)</button>
+              <button class="case-order-btn" data-order="NVAcGDAb" title="Nominativus, Vocativus, Accusativus, Genetivus, Dativus, Ablativus">NVAcGDAb</button>
+              <button class="case-order-btn" data-order="NGDAcAbV" title="Nominativus, Genetivus, Dativus, Accusativus, Ablativus, Vocativus">NGDAcAbV</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paradigm Category Pills -->
+        <div class="filter-pills" id="pageCategoryPills" style="margin-top: 1rem;">
+          <button class="filter-pill active" data-cat="nouns">1-5. İsim Çekimleri (Declinatio)</button>
+          <button class="filter-pill" data-cat="adjectives">1-3. Sıfat Çekimleri (Adiectivum)</button>
+          <button class="filter-pill" data-cat="pronouns">Zamirler (Pronomen)</button>
+          <button class="filter-pill" data-cat="verbs">1-4. Fiil Çekimleri (Coniugatio)</button>
+          <button class="filter-pill" data-cat="irregulars">Düzensizler (Irregularia)</button>
+        </div>
+      </div>
+
+      <!-- Content Container -->
+      <div id="pageParadigmsBody" style="margin-top: 1.25rem;">
+        <!-- Dynamic content rendered by InflectionEngine -->
+      </div>
+    </section>
+
   </main>
 
   <!-- About / Classroom Context Modal -->
@@ -562,7 +610,12 @@
         <a id="inflectionModalLogeionBtn" href="#" target="_blank" rel="noopener noreferrer" class="logeion-link-btn" style="padding: 0.5rem 0.85rem;">
           📖 Logeion Sözlükte Aç ↗
         </a>
-        <button class="btn-decision btn-know modal-close-btn">Kapat</button>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <button id="inflectionGoParadigmsBtn" class="btn-secondary-sm" title="Tüm genel model çekim tablolarını aç">
+            📜 Tüm Tabloları Gör
+          </button>
+          <button class="btn-decision btn-know modal-close-btn">Kapat</button>
+        </div>
       </div>
     </div>
   </div>
@@ -638,13 +691,13 @@
   </footer>
 
   <!-- Scripts -->
-  <script src="data/latin_core_data.js"></script>
-  <script src="data/latin_paradigms.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/data-manager.js"></script>
-  <script src="js/inflection-engine.js"></script>
-  <script src="js/flashcard.js"></script>
-  <script src="js/quiz.js"></script>
-  <script src="js/app.js"></script>
+  <script src="data/latin_core_data.js?v=2.2"></script>
+  <script src="data/latin_paradigms.js?v=2.2"></script>
+  <script src="js/storage.js?v=2.2"></script>
+  <script src="js/data-manager.js?v=2.2"></script>
+  <script src="js/inflection-engine.js?v=2.2"></script>
+  <script src="js/flashcard.js?v=2.2"></script>
+  <script src="js/quiz.js?v=2.2"></script>
+  <script src="js/app.js?v=2.2"></script>
 </body>
 </html>
