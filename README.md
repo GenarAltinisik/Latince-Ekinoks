@@ -1,7 +1,7 @@
 # 🏛️ Latince Ekinoks (Aequinoctium Latinum)
 
-> **İstanbul Üniversitesi Edebiyat Fakültesi Eski Yunan Dili ve Edebiyatı Anabilim Dalı**  
-> **Latince Gramer 3** Dersi (Doç. Dr. Ekin Öyken) İçin Özel Olarak Tasarlanmış Dijital Latince Kelime & Flashcard Platformu
+> **İstanbul Üniversitesi Edebiyat Fakültesi Klasik Filoloji (Latin Dili ve Edebiyatı & Eski Yunan Dili ve Edebiyatı)**  
+> **Ortak Latince Gramer 3** Dersi (Doç. Dr. Ekin Öyken) İçin Özel Olarak Tasarlanmış Dijital Latince Kelime & Flashcard Platformu
 
 ---
 
