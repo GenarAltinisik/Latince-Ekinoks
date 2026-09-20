@@ -8,48 +8,59 @@ const InflectionEngine = (function () {
     return config.order.map(key => LATIN_CASE_INFO[key]);
   }
 
+  // Yardımcı: Makron ve aksanları temizleyip küçük harfe çevirir
+  function normalizeLatin(str) {
+    if (!str) return '';
+    return str
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  }
+
   // Kelime için çekim verisi üretir
   function getWordInflection(word) {
     if (!word) return null;
 
     const posGroup = (word.pos_group || '').toLowerCase();
-    const cleanHeadword = word.headword || word.lemma;
-    const cleanLemma = word.lemma || word.headword;
+    const posTr = (word.pos_tr || '').toLowerCase();
+    const cleanLemma = normalizeLatin(word.lemma || '');
+    const cleanHeadFirst = normalizeLatin((word.headword || '').split(/[\s,.;]+/)[0]);
 
-    // 1. Önce özel/düzensiz istisna tablosunda var mı kontrol et
-    for (const [key, exc] of Object.entries(LATIN_EXCEPTIONS)) {
-      if (cleanHeadword.toLowerCase().includes(key) || cleanLemma.toLowerCase() === key) {
-        return {
-          type: 'noun_declension',
-          title: exc.title || cleanHeadword,
-          isIrregular: true,
-          forms: exc.forms,
-          note: exc.note || ''
-        };
-      }
+    // 1. Fiil Çekimi (En öncelikli; fiiller asla isim istisnalarıyla karışmamalı!)
+    if (posGroup.includes('fiil') || posTr.includes('fiil')) {
+      return generateVerbConjugation(word);
     }
 
-    // 2. İsim Çekimi
-    if (posGroup.includes('isim') || word.pos_tr?.toLowerCase().includes('isim')) {
+    // 2. Özel / Düzensiz İsim İstisnaları (vīs, vir, deus, domus, nēmō)
+    // SADECE isimler için ve KESİN lemma/başlık eşleşmesiyle (substring DEĞİL!)
+    if (posGroup.includes('isim') || posTr.includes('isim')) {
+      for (const [key, exc] of Object.entries(LATIN_EXCEPTIONS)) {
+        const normKey = normalizeLatin(key);
+        if (cleanLemma === normKey || cleanHeadFirst === normKey) {
+          return {
+            type: 'noun_declension',
+            title: exc.title || word.headword,
+            isIrregular: true,
+            forms: exc.forms,
+            note: exc.note || ''
+          };
+        }
+      }
       return generateNounDeclension(word);
     }
 
     // 3. Sıfat Çekimi
-    if (posGroup.includes('sıfat') || posGroup.includes('sifat') || word.pos_tr?.toLowerCase().includes('sıfat')) {
+    if (posGroup.includes('sıfat') || posGroup.includes('sifat') || posTr.includes('sıfat') || posTr.includes('sifat')) {
       return generateAdjectiveDeclension(word);
     }
 
     // 4. Zamir Çekimi
-    if (posGroup.includes('zamir') || word.pos_tr?.toLowerCase().includes('zamir')) {
+    if (posGroup.includes('zamir') || posTr.includes('zamir')) {
       return generatePronounDeclension(word);
     }
 
-    // 5. Fiil Çekimi
-    if (posGroup.includes('fiil') || word.pos_tr?.toLowerCase().includes('fiil')) {
-      return generateVerbConjugation(word);
-    }
-
-    // 6. Çekimsiz Sözcükler (Zarf, Edat, Bağlaç)
+    // 5. Çekimsiz Sözcükler (Zarf, Edat, Bağlaç, Ünlem)
     return {
       type: 'indeclinable',
       title: `${word.headword} (${word.pos_tr})`,
@@ -373,73 +384,148 @@ const InflectionEngine = (function () {
   // FİİL ÇEKİMİ ÜRETİCİ
   // ==========================================================================
   function generateVerbConjugation(word) {
-    const hw = word.headword;
-    const lemma = word.lemma;
+    const hw = word.headword || '';
+    const lemma = word.lemma || '';
+    const posTr = (word.pos_tr || '').toLowerCase();
+    const normLemma = normalizeLatin(lemma);
 
-    // Düzensiz fiiller için hazır referansları eşle
-    if (lemma === 'sum' || hw.includes('esse fuī')) {
+    // 1. DÜZENSİZ FİİLLER (sum, possum, fero, volo, eo ve bileşikleri)
+    if (normLemma === 'sum' || hw.includes('esse fui') || hw.includes('esse fuī')) {
       return { type: 'verb_conjugation', ...LATIN_REFERENCE_PARADIGMS.verbs.find(v => v.id === 'verb_sum') };
     }
-    if (lemma === 'possum' || hw.includes('posse potuī')) {
+    if (normLemma === 'possum' || hw.includes('posse potui') || hw.includes('posse potuī')) {
       return { type: 'verb_conjugation', ...LATIN_REFERENCE_PARADIGMS.verbs.find(v => v.id === 'verb_possum') };
     }
-    if (lemma === 'fero' || lemma === 'ferō' || hw.includes('ferre tulī')) {
+    if (normLemma === 'fero' || hw.includes('ferre tuli') || hw.includes('ferre tulī')) {
       return { type: 'verb_conjugation', ...LATIN_REFERENCE_PARADIGMS.verbs.find(v => v.id === 'verb_fero') };
     }
-    if (lemma === 'volo' || lemma === 'volō' || hw.includes('velle')) {
+    if (normLemma === 'volo' || hw.includes('velle volui') || hw.includes('velle voluī')) {
       return { type: 'verb_conjugation', ...LATIN_REFERENCE_PARADIGMS.verbs.find(v => v.id === 'verb_volo') };
     }
-    if (lemma === 'eo' || lemma === 'eō' || hw.includes('īre')) {
+    if (normLemma === 'eo' || hw.includes('ire ii') || hw.includes('īre iī')) {
       return { type: 'verb_conjugation', ...LATIN_REFERENCE_PARADIGMS.verbs.find(v => v.id === 'verb_eo') };
     }
 
-    // Deponent Fiiller (biçimce edilgen)
-    const isDeponent = hw.includes('ī, ') || hw.includes('rī, ') || lemma.endsWith('or');
+    // 2. DEPONENT FİİLLER (Biçimce Edilgen, Anlamca Etken)
+    const isDeponent = posTr.includes('deponens') || lemma.endsWith('or') || hw.includes('sum');
     if (isDeponent) {
-      const stem = lemma.replace(/or$/, '');
+      const baseStem = lemma.replace(/ior$/, '').replace(/or$/, '');
+      const perfPartMatch = hw.match(/([a-zA-Z\u0100-\u017F]+us)\s+sum/);
+      const perfPart = perfPartMatch ? perfPartMatch[1].replace(/us$/, '') : (baseStem + 't');
+
+      let p2s = baseStem + 'ris', p3s = baseStem + 'tur', p1p = baseStem + 'mur', p2p = baseStem + 'minī', p3p = baseStem + 'ntur';
+      let imp1s = baseStem + 'bar', imp2s = baseStem + 'bāris', imp3s = baseStem + 'bātur', imp1p = baseStem + 'bāmur', imp2p = baseStem + 'bāminī', imp3p = baseStem + 'bantur';
+      let fut1s = baseStem + 'bor', fut2s = baseStem + 'beris', fut3s = baseStem + 'bitur', fut1p = baseStem + 'bimur', fut2p = baseStem + 'biminī', fut3p = baseStem + 'buntur';
+
+      // 3. ve 4. çekim deponentler için futurum (-ar, -ēris...)
+      if (posTr.includes('3.') || posTr.includes('4.')) {
+        fut1s = baseStem + 'ar';
+        fut2s = baseStem + 'ēris';
+        fut3s = baseStem + 'ētur';
+        fut1p = baseStem + 'ēmur';
+        fut2p = baseStem + 'ēminī';
+        fut3p = baseStem + 'entur';
+      }
+
       return {
         type: 'verb_conjugation',
         title: `${hw} (Deponent Fiil - Verbum Dēpōnēns)`,
         model: `${hw} • Biçimce Edilgen, Anlamca Etken`,
         tenses: {
-          praesens_act: { name: 'Praesens (Şimdiki / Geniş Zaman)', p1s: lemma, p2s: stem + 'ris', p3s: stem + 'tur', p1p: stem + 'mur', p2p: stem + 'minī', p3p: stem + 'ntur' },
-          imperfectum_act: { name: 'Imperfectum (Geçmişte Süreklilik: -yordu)', p1s: stem + 'bar', p2s: stem + 'bāris', p3s: stem + 'bātur', p1p: stem + 'bāmur', p2p: stem + 'bāminī', p3p: stem + 'bantur' },
-          futurum_act: { name: 'Futurum I (Gelecek Zaman)', p1s: stem + 'ar', p2s: stem + 'ēris', p3s: stem + 'ētur', p1p: stem + 'ēmur', p2p: stem + 'ēminī', p3p: stem + 'entur' },
-          perfectum_act: { name: 'Perfectum (Görülen Geçmiş: -di)', p1s: stem + 'tus sum', p2s: stem + 'tus es', p3s: stem + 'tus est', p1p: stem + 'tī sumus', p2p: stem + 'tī estis', p3p: stem + 'tī sunt' },
-          plusquamperfectum_act: { name: 'Plusquamperfectum (-mişti)', p1s: stem + 'tus eram', p2s: stem + 'tus erās', p3s: stem + 'tus erat', p1p: stem + 'tī erāmus', p2p: stem + 'tī erātis', p3p: stem + 'tī erant' },
-          futurum_perf_act: { name: 'Futurum II (Bitmiş Gelecek Zaman)', p1s: stem + 'tus erō', p2s: stem + 'tus eris', p3s: stem + 'tus erit', p1p: stem + 'tī erimus', p2p: stem + 'tī eritis', p3p: stem + 'tī erunt' }
+          praesens_act: { name: 'Praesens (Şimdiki / Geniş Zaman)', p1s: lemma, p2s, p3s, p1p, p2p, p3p },
+          imperfectum_act: { name: 'Imperfectum (Geçmişte Süreklilik: -yordu)', p1s: imp1s, p2s: imp2s, p3s: imp3s, p1p: imp1p, p2p: imp2p, p3p: imp3p },
+          futurum_act: { name: 'Futurum I (Gelecek Zaman: -ecek)', p1s: fut1s, p2s: fut2s, p3s: fut3s, p1p: fut1p, p2p: fut2p, p3p: fut3p },
+          perfectum_act: { name: 'Perfectum (Görülen Geçmiş: -di)', p1s: perfPart + 'us sum', p2s: perfPart + 'us es', p3s: perfPart + 'us est', p1p: perfPart + 'ī sumus', p2p: perfPart + 'ī estis', p3p: perfPart + 'ī sunt' },
+          plusquamperfectum_act: { name: 'Plusquamperfectum (-mişti)', p1s: perfPart + 'us eram', p2s: perfPart + 'us erās', p3s: perfPart + 'us erat', p1p: perfPart + 'ī erāmus', p2p: perfPart + 'ī erātis', p3p: perfPart + 'ī erant' },
+          futurum_perf_act: { name: 'Futurum II (Bitmiş Gelecek Zaman)', p1s: perfPart + 'us erō', p2s: perfPart + 'us eris', p3s: perfPart + 'us erit', p1p: perfPart + 'ī erimus', p2p: perfPart + 'ī eritis', p3p: perfPart + 'ī erunt' }
         }
       };
     }
 
-    // Standart Etken Fiiller (1-4 Coniugatio)
-    let stem = lemma.replace(/ō$/, '').replace(/o$/, '');
-    let conjType = '1. Çekim (-āre)';
-    let inf = 'āre';
-
-    if (hw.includes('-ēre') || hw.includes('ēre')) {
-      conjType = '2. Çekim (-ēre)';
-      inf = 'ēre';
-    } else if (hw.includes('-īre') || hw.includes('īre')) {
-      conjType = '4. Çekim (-īre)';
-      inf = 'īre';
-    } else if (hw.includes('-ere') || hw.includes('ere')) {
-      conjType = '3. Çekim (-ere)';
-      inf = 'ere';
+    // 3. STANDART ETKEN FİİLLER (1-4 Coniugatio)
+    let conjGroup = 1;
+    let conjName = '1. Çekim (-āre)';
+    if (posTr.includes('2.') || hw.includes('ēre') || hw.includes('-ēre')) {
+      conjGroup = 2;
+      conjName = '2. Çekim (-ēre)';
+    } else if (posTr.includes('3.') && posTr.includes('-io')) {
+      conjGroup = 35; // 3. Çekim -io
+      conjName = '3. Çekim (-ere, -iō)';
+    } else if (posTr.includes('3.') || hw.includes('ere') || hw.includes('-ere')) {
+      conjGroup = 3;
+      conjName = '3. Çekim (-ere)';
+    } else if (posTr.includes('4.') || hw.includes('īre') || hw.includes('-īre')) {
+      conjGroup = 4;
+      conjName = '4. Çekim (-īre)';
     }
 
-    // Köklerden türet
+    const rawStem = lemma.replace(/[ōo]$/, '');
+    
+    // Perfect kökünü headword'deki 3. parçadan çıkar
+    let perfStem = '';
+    const tokens = hw.split(/[\s,;]+/);
+    for (let i = 1; i < tokens.length; i++) {
+      const t = tokens[i].trim();
+      if (/^-?[a-zA-Z\u0100-\u017F]+[iī]$/.test(t) && !t.includes('re') && !t.includes('rī')) {
+        if (t.startsWith('-')) {
+          perfStem = rawStem + t.replace(/^-/, '').replace(/[iī]$/, '');
+        } else {
+          perfStem = t.replace(/[iī]$/, '');
+        }
+        break;
+      }
+    }
+
+    if (!perfStem) {
+      if (conjGroup === 1) perfStem = rawStem + 'āv';
+      else if (conjGroup === 2) perfStem = rawStem + 'u';
+      else if (conjGroup === 4) perfStem = rawStem + 'īv';
+      else perfStem = rawStem + 's';
+    }
+
+    let p1s = lemma, p2s, p3s, p1p, p2p, p3p;
+    let imp1s, imp2s, imp3s, imp1p, imp2p, imp3p;
+    let fut1s, fut2s, fut3s, fut1p, fut2p, fut3p;
+
+    if (conjGroup === 1) {
+      // 1. Çekim (amō, amāre)
+      p2s = rawStem + 'ās'; p3s = rawStem + 'at'; p1p = rawStem + 'āmus'; p2p = rawStem + 'ātis'; p3p = rawStem + 'ant';
+      imp1s = rawStem + 'ābam'; imp2s = rawStem + 'ābās'; imp3s = rawStem + 'ābat'; imp1p = rawStem + 'ābāmus'; imp2p = rawStem + 'ābātis'; imp3p = rawStem + 'ābant';
+      fut1s = rawStem + 'ābō'; fut2s = rawStem + 'ābis'; fut3s = rawStem + 'ābit'; fut1p = rawStem + 'ābimus'; fut2p = rawStem + 'ābitis'; fut3p = rawStem + 'ābunt';
+    } else if (conjGroup === 2) {
+      // 2. Çekim (videō, vidēre)
+      p2s = rawStem + 's'; p3s = rawStem + 't'; p1p = rawStem + 'mus'; p2p = rawStem + 'tis'; p3p = rawStem + 'nt';
+      imp1s = rawStem + 'bam'; imp2s = rawStem + 'bās'; imp3s = rawStem + 'bat'; imp1p = rawStem + 'bāmus'; imp2p = rawStem + 'bātis'; imp3p = rawStem + 'bant';
+      fut1s = rawStem + 'bō'; fut2s = rawStem + 'bis'; fut3s = rawStem + 'bit'; fut1p = rawStem + 'bimus'; fut2p = rawStem + 'bitis'; fut3p = rawStem + 'bunt';
+    } else if (conjGroup === 3) {
+      // 3. Çekim -o (dīcō, dīcere)
+      p2s = rawStem + 'is'; p3s = rawStem + 'it'; p1p = rawStem + 'imus'; p2p = rawStem + 'itis'; p3p = rawStem + 'unt';
+      imp1s = rawStem + 'ēbam'; imp2s = rawStem + 'ēbās'; imp3s = rawStem + 'ēbat'; imp1p = rawStem + 'ēbāmus'; imp2p = rawStem + 'ēbātis'; imp3p = rawStem + 'ēbant';
+      fut1s = rawStem + 'am'; fut2s = rawStem + 'ēs'; fut3s = rawStem + 'et'; fut1p = rawStem + 'ēmus'; fut2p = rawStem + 'ētis'; fut3p = rawStem + 'ent';
+    } else if (conjGroup === 35) {
+      // 3. Çekim -io (capiō, capere)
+      const consStem = rawStem.slice(0, -1);
+      p2s = consStem + 'is'; p3s = consStem + 'it'; p1p = consStem + 'imus'; p2p = consStem + 'itis'; p3p = rawStem + 'unt';
+      imp1s = rawStem + 'ēbam'; imp2s = rawStem + 'ēbās'; imp3s = rawStem + 'ēbat'; imp1p = rawStem + 'ēbāmus'; imp2p = rawStem + 'ēbātis'; imp3p = rawStem + 'ēbant';
+      fut1s = rawStem + 'am'; fut2s = rawStem + 'ēs'; fut3s = rawStem + 'et'; fut1p = rawStem + 'ēmus'; fut2p = rawStem + 'ētis'; fut3p = rawStem + 'ent';
+    } else {
+      // 4. Çekim (audiō, audīre)
+      p2s = rawStem + 's'; p3s = rawStem + 't'; p1p = rawStem + 'mus'; p2p = rawStem + 'tis'; p3p = rawStem + 'unt';
+      imp1s = rawStem + 'ēbam'; imp2s = rawStem + 'ēbās'; imp3s = rawStem + 'ēbat'; imp1p = rawStem + 'ēbāmus'; imp2p = rawStem + 'ēbātis'; imp3p = rawStem + 'ēbant';
+      fut1s = rawStem + 'am'; fut2s = rawStem + 'ēs'; fut3s = rawStem + 'et'; fut1p = rawStem + 'ēmus'; fut2p = rawStem + 'ētis'; fut3p = rawStem + 'ent';
+    }
+
     return {
       type: 'verb_conjugation',
-      title: `${hw} (${conjType})`,
-      model: `${hw}`,
+      title: `${hw} (${conjName})`,
+      model: `${hw} • Etken Çekim (Actīvum)`,
       tenses: {
-        praesens_act: { name: 'Praesens (Şimdiki / Geniş Zaman)', p1s: lemma, p2s: stem + 's', p3s: stem + 't', p1p: stem + 'mus', p2p: stem + 'tis', p3p: stem + 'nt' },
-        imperfectum_act: { name: 'Imperfectum (-yordu)', p1s: stem + 'bam', p2s: stem + 'bās', p3s: stem + 'bat', p1p: stem + 'bāmus', p2p: stem + 'bātis', p3p: stem + 'bant' },
-        futurum_act: { name: 'Futurum I (-ecek)', p1s: stem + 'bō', p2s: stem + 'bis', p3s: stem + 'bit', p1p: stem + 'bimus', p2p: stem + 'bitis', p3p: stem + 'bunt' },
-        perfectum_act: { name: 'Perfectum (-di)', p1s: stem + 'vī', p2s: stem + 'vistī', p3s: stem + 'vit', p1p: stem + 'vimus', p2p: stem + 'vistis', p3p: stem + 'vērunt' },
-        plusquamperfectum_act: { name: 'Plusquamperfectum (-mişti)', p1s: stem + 'veram', p2s: stem + 'verās', p3s: stem + 'verat', p1p: stem + 'verāmus', p2p: stem + 'verātis', p3p: stem + 'verant' },
-        futurum_perf_act: { name: 'Futurum II (Bitmiş Gelecek Zaman)', p1s: stem + 'verō', p2s: stem + 'veris', p3s: stem + 'verit', p1p: stem + 'verimus', p2p: stem + 'veritis', p3p: stem + 'verint' }
+        praesens_act: { name: 'Praesens (Şimdiki / Geniş Zaman)', p1s, p2s, p3s, p1p, p2p, p3p },
+        imperfectum_act: { name: 'Imperfectum (Geçmişte Süreklilik: -yordu)', p1s: imp1s, p2s: imp2s, p3s: imp3s, p1p: imp1p, p2p: imp2p, p3p: imp3p },
+        futurum_act: { name: 'Futurum I (Gelecek Zaman: -ecek)', p1s: fut1s, p2s: fut2s, p3s: fut3s, p1p: fut1p, p2p: fut2p, p3p: fut3p },
+        perfectum_act: { name: 'Perfectum (Görülen / Tamamlanmış Geçmiş: -di)', p1s: perfStem + 'ī', p2s: perfStem + 'istī', p3s: perfStem + 'it', p1p: perfStem + 'imus', p2p: perfStem + 'istis', p3p: perfStem + 'ērunt' },
+        plusquamperfectum_act: { name: 'Plusquamperfectum (Öncelikli Geçmiş: -mişti)', p1s: perfStem + 'eram', p2s: perfStem + 'erās', p3s: perfStem + 'erat', p1p: perfStem + 'erāmus', p2p: perfStem + 'erātis', p3p: perfStem + 'erant' },
+        futurum_perf_act: { name: 'Futurum II (Bitmiş Gelecek Zaman)', p1s: perfStem + 'erō', p2s: perfStem + 'eris', p3s: perfStem + 'erit', p1p: perfStem + 'erimus', p2p: perfStem + 'eritis', p3p: perfStem + 'erint' }
       }
     };
   }
@@ -838,6 +924,88 @@ const InflectionEngine = (function () {
                   </div>
                 `).join('')}
               </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    if (category === 'irregulars') {
+      const irregularVerbs = LATIN_REFERENCE_PARADIGMS.verbs.filter(v => 
+        ['verb_sum', 'verb_possum', 'verb_volo', 'verb_fero', 'verb_eo'].includes(v.id)
+      );
+      const irregularNouns = Object.values(LATIN_EXCEPTIONS);
+
+      return `
+        <div class="reference-section-list">
+          <div style="margin: 0.5rem 0 1.25rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border-color);">
+            <h3 style="font-family: var(--font-serif); color: var(--primary); font-size: 1.3rem; margin: 0 0 0.25rem 0;">⚡ Temel Düzensiz Fiiller (Verba Anōmala)</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Klasik metinlerde en sık karşılaşılan ve kurallı çekimlere uymayan kök fiiller.</p>
+          </div>
+          ${irregularVerbs.map(item => `
+            <div class="reference-item-card">
+              <div class="reference-item-header">
+                <div>
+                  <h4 class="reference-item-title">${item.title}</h4>
+                  <p class="reference-item-sub">Model Fiil: <strong>${item.model}</strong></p>
+                </div>
+              </div>
+
+              <div class="paradigm-verb-grid">
+                ${Object.entries(item.tenses).map(([tKey, t]) => `
+                  <div class="verb-tense-card">
+                    <div class="tense-card-header">${t.name}</div>
+                    <table class="verb-mini-table">
+                      <tbody>
+                        <tr><td class="person-label">1. Tekil (ego)</td><td class="latin-text">${t.p1s}</td></tr>
+                        <tr><td class="person-label">2. Tekil (tū)</td><td class="latin-text">${t.p2s}</td></tr>
+                        <tr><td class="person-label">3. Tekil (is/ea)</td><td class="latin-text">${t.p3s}</td></tr>
+                        <tr><td class="person-label">1. Çoğul (nōs)</td><td class="latin-text">${t.p1p}</td></tr>
+                        <tr><td class="person-label">2. Çoğul (vōs)</td><td class="latin-text">${t.p2p}</td></tr>
+                        <tr><td class="person-label">3. Çoğul (eī/eae)</td><td class="latin-text">${t.p3p}</td></tr>
+                      </tbody>
+                    </table>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+
+          <div style="margin: 2rem 0 1.25rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border-color);">
+            <h3 style="font-family: var(--font-serif); color: var(--primary); font-size: 1.3rem; margin: 0 0 0.25rem 0;">🏛️ Düzensiz & Özel İsimler (Nōmina Anōmala)</h3>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Kökte değişim gösteren veya bazı halleri eksik olan özel isim çekimleri.</p>
+          </div>
+          ${irregularNouns.map(item => `
+            <div class="reference-item-card">
+              <div class="reference-item-header">
+                <div>
+                  <h4 class="reference-item-title">${item.title}</h4>
+                </div>
+              </div>
+              <div class="table-responsive">
+                <table class="paradigm-table">
+                  <thead>
+                    <tr>
+                      <th class="col-case">Casus (Türkçe Karşılığı)</th>
+                      <th>Singulāris (Tekil)</th>
+                      <th>Plūrālis (Çoğul)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${orderedCases.map(c => `
+                      <tr>
+                        <td class="case-label-cell">
+                          <strong>${c.name}</strong>
+                          <span class="case-tr-tag">(${c.tr})</span>
+                        </td>
+                        <td class="form-cell latin-text">${item.forms[c.key]?.sg || '-'}</td>
+                        <td class="form-cell latin-text">${item.forms[c.key]?.pl || '-'}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+              ${item.note ? `<div class="paradigm-footer-note">💡 ${item.note}</div>` : ''}
             </div>
           `).join('')}
         </div>
