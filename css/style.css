@@ -423,3 +423,23 @@ body {
 .footer-links a:hover {
   text-decoration: underline;
 }
+
+.footer-creator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  flex-wrap: wrap;
+}
+
+.footer-creator a {
+  color: var(--primary);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.footer-creator a:hover {
+  text-decoration: underline;
+}

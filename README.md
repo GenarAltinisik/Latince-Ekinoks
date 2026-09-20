@@ -73,6 +73,7 @@ Ardından tarayıcınızda `http://localhost:8000` adresini açabilirsiniz.
 
 ## 📚 Kaynakça ve Teşekkür
 
+- **Geliştirici & Tasarım:** [Genar Altınışık](https://github.com/GenarAltinisik)
 - **Veri Tabanı:** [Dickinson College Commentaries - Latin Core Vocabulary](https://dcc.dickinson.edu/latin-core-list1) (LASLA verileri)
 - **Türkçe Çeviri:** Mert İnan & Emin Çomoğlu (İstanbul Üniversitesi Eski Yunan Dili ve Edebiyatı Mezunları)
 - **Sözlük Altyapısı:** [Logeion - University of Chicago](https://logeion.uchicago.edu/) (Lewis & Short, Gaffiot)
