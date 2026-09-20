@@ -332,6 +332,48 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { m: 'nōs (bizi)', f: 'vōs (sizi)', n: '-' },
         abl: { m: 'nōbīs', f: 'vōbīs', n: '-' }
       }
+    },
+    {
+      id: 'pron_demonstrative_hic',
+      title: 'İşaret Zamiri: hic, haec, hoc (bu)',
+      subtitle: 'bu (eril), bu (dişil), bu (nötr) - Yakın İşaret',
+      singular: {
+        nom: { m: 'hic', f: 'haec', n: 'hoc' },
+        voc: { m: '-', f: '-', n: '-' },
+        gen: { m: 'huius', f: 'huius', n: 'huius' },
+        dat: { m: 'huic', f: 'huic', n: 'huic' },
+        acc: { m: 'hunc', f: 'hanc', n: 'hoc' },
+        abl: { m: 'hōc', f: 'hāc', n: 'hōc' }
+      },
+      plural: {
+        nom: { m: 'hī', f: 'hae', n: 'haec' },
+        voc: { m: '-', f: '-', n: '-' },
+        gen: { m: 'hōrum', f: 'hārum', n: 'hōrum' },
+        dat: { m: 'hīs', f: 'hīs', n: 'hīs' },
+        acc: { m: 'hōs', f: 'hās', n: 'haec' },
+        abl: { m: 'hīs', f: 'hīs', n: 'hīs' }
+      }
+    },
+    {
+      id: 'pron_demonstrative_ille',
+      title: 'İşaret Zamiri: ille, illa, illud (şu, o)',
+      subtitle: 'şu/o (eril), şu/o (dişil), şu/o (nötr) - Uzak İşaret',
+      singular: {
+        nom: { m: 'ille', f: 'illa', n: 'illud' },
+        voc: { m: '-', f: '-', n: '-' },
+        gen: { m: 'illīus', f: 'illīus', n: 'illīus' },
+        dat: { m: 'illī', f: 'illī', n: 'illī' },
+        acc: { m: 'illum', f: 'illam', n: 'illud' },
+        abl: { m: 'illō', f: 'illā', n: 'illō' }
+      },
+      plural: {
+        nom: { m: 'illī', f: 'illae', n: 'illa' },
+        voc: { m: '-', f: '-', n: '-' },
+        gen: { m: 'illōrum', f: 'illārum', n: 'illōrum' },
+        dat: { m: 'illīs', f: 'illīs', n: 'illīs' },
+        acc: { m: 'illōs', f: 'illās', n: 'illa' },
+        abl: { m: 'illīs', f: 'illīs', n: 'illīs' }
+      }
     }
   ],
 

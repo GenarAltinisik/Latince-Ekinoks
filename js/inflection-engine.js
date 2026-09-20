@@ -22,17 +22,66 @@ const InflectionEngine = (function () {
       .trim();
   }
 
+  // Latincede bileşik fiil önekleri (Uzundan kısaya sıralı: gölgeleme önleme için)
+  const LATIN_PREFIXES = [
+    'circum', 'praeter', 'trans', 'trāns', 'inter', 'intro', 'intrō', 'super',
+    'retro', 'retrō', 'ante', 'prae', 'post', 'prod', 'prōd', 'pro', 'prō',
+    'sub', 'suc', 'suf', 'sug', 'sup', 'sur', 'sus', 'per', 'red', 'dis', 'dif',
+    'con', 'com', 'col', 'cor', 'abs', 'ad', 'ac', 'af', 'ag', 'al', 'an', 'ap',
+    'ar', 'as', 'at', 'ob', 'oc', 'of', 'op', 're', 'se', 'sē', 'de', 'dē',
+    'ex', 'ef', 'in', 'īn', 'il', 'im', 'ir', 'co', 'di', 'dī', 'ab', 'a', 'ā', 'e', 'ē'
+  ];
+
+  // Kök içermeyen saf çekim sonlanışları
+  const PURE_VERB_ENDINGS = /^-(āre|ēre|ere|īre|ī|i|rī|ārī|ērī|īrī|āvī|avi|uī|ui|īvī|ivi|iī|ii|ēvī|evi|itum|ātum|ītum|ētum|ūtum|tum|sum)$/i;
+
   // Fiillerin 4 temel parçasını (Praesens, Infinitivus, Perfectum, Supinum) ayrıştırır
   function parseVerbPrincipalParts(hw, lemma) {
     if (!hw) return { pres: lemma || '', inf: '', perf: '', sup: '' };
-    const tokens = hw.replace(/[,;]/g, ' ').split(/\s+/).filter(Boolean);
+    const tokens = hw.replace(/[,;:]/g, ' ').split(/\s+/).filter(Boolean);
     const pres = tokens[0] || lemma || '';
-    const cleanRaw = (pres || lemma).replace(/[oō]$/, '');
 
-    // Ekleri kökle birleştirirken sesli harf mükerrerliğini önler (örn: audi + -īre -> audīre)
-    function mergeSuffix(stem, suffix) {
+    // Ekleri kök veya önek ile birleştirir
+    function mergeSuffix(presWord, suffix) {
       if (!suffix || !suffix.startsWith('-')) return suffix;
       const s = suffix.slice(1);
+      const normPres = normalizeLatin(presWord);
+
+      // A) Bileşik fiillerde kök değişimi (örn: prōcēdō + -cēdere, -cessī, -cessum; addūcō + -ductum; colligō + -lēctum)
+      if (!PURE_VERB_ENDINGS.test(suffix)) {
+        for (const p of LATIN_PREFIXES) {
+          const normP = normalizeLatin(p);
+          if (normPres.startsWith(normP) && normPres.length > normP.length + 1) {
+            return presWord.slice(0, p.length) + s;
+          }
+        }
+      }
+
+      // B) Saf çekim ekleri (örn: -āre, -ēre, -ere, -īre, -uī, -itum, -āvī, -ātum)
+      let stem = presWord.replace(/[oō]$/i, '');
+
+      // 2. Çekim -eō ile -uī veya -itum (örn: praebeō -> praebuī, praebitum; soleō -> solitus)
+      if (/[eē][oō]$/i.test(presWord)) {
+        if (/^[iuīū]/i.test(s)) {
+          stem = presWord.replace(/[eē][oō]$/i, '');
+        } else if (/^[eē]/i.test(s)) {
+          stem = presWord.replace(/[oō]$/i, '');
+          if (stem.endsWith('e') || stem.endsWith('ē')) {
+            stem = stem.slice(0, -1);
+          }
+        }
+      } else if (/[iī][oō]$/i.test(presWord)) {
+        // 4. Çekim -iō ile -īre, -īvī, -ītum (örn: audiō -> audīre, audītum)
+        if (/^[iī]/i.test(s)) {
+          stem = presWord.replace(/[iī][oō]$/i, '');
+        }
+      } else if (/[aā][oō]$/i.test(presWord)) {
+        if (/^[aā]/i.test(s)) {
+          stem = presWord.replace(/[aā][oō]$/i, '');
+        }
+      }
+
+      // Sesli harf mükerrerliğini önle
       if (/^[iī]/.test(s) && /[iī]$/.test(stem)) {
         return stem.slice(0, -1) + s;
       }
@@ -53,7 +102,7 @@ const InflectionEngine = (function () {
       // Deponent / Yarı Deponent 3. Parça: "secūtus sum", "passus sum", "ausus sum"
       if (tokens[i + 1] === 'sum' || tokens[i + 1] === 'fuī') {
         if (!perf) {
-          perf = mergeSuffix(cleanRaw, t) + ' sum';
+          perf = mergeSuffix(pres, t) + ' sum';
           i++; // 'sum' kelimesini atla
           continue;
         }
@@ -62,21 +111,21 @@ const InflectionEngine = (function () {
       // Infinitivus: -re veya deponent için -rī / -ī
       if (/r[eēīi]$/i.test(t) || /ī$/i.test(t)) {
         if (!inf) {
-          inf = mergeSuffix(cleanRaw, t);
+          inf = mergeSuffix(pres, t);
           continue;
         }
       }
       // Perfectum: -ī ile biter ve infinitivus/fui değildir
       if (/[iī]$/i.test(t) && !/r[eēīi]$/i.test(t) && t !== 'fui' && t !== 'fuī') {
         if (!perf) {
-          perf = mergeSuffix(cleanRaw, t);
+          perf = mergeSuffix(pres, t);
           continue;
         }
       }
       // Supinum / Participium Perfectum: -um veya -us ile biter
       if (/um$/i.test(t) || /us$/i.test(t)) {
         if (!sup) {
-          sup = mergeSuffix(cleanRaw, t);
+          sup = mergeSuffix(pres, t);
           continue;
         }
       }
@@ -154,8 +203,23 @@ const InflectionEngine = (function () {
     const pe = (word.pos_en || '').trim();
     const isNeuter = hw.includes(' n.') || word.cat_tr?.includes('Nötr') || pe.includes('Neuter');
 
+    // 0. Çekimsiz İsimler (Nōmen Indeclīnābile: nefās, fās)
+    if (hw.includes('indecl') || pe.includes('Indeclinable')) {
+      return {
+        type: 'indeclinable',
+        title: `${hw} (${word.pos_tr || 'İsim'})`,
+        modelName: 'Çekimsiz İsim (Nōmen Indeclīnābile)',
+        groupDescription: `${word.pos_tr || 'İsim'} • Cümle içinde değişmez, tekildir`,
+        pos: word.pos_tr,
+        cat: word.cat_tr,
+        meaning_tr: word.def_tr,
+        meaning_en: word.def_en,
+        note: 'Bu isim çekimsizdir (Nōmen Indeclīnābile). Cümle içinde çoğunlukla yalnızca Nominativus ve Accusativus hâllerinde aynı kök biçimiyle kullanılır; diğer hâlleri ve çoğulu yoktur.'
+      };
+    }
+
     // 1. Declinatio: -a, -ae (puella modeli)
-    if (pe === 'Noun: 1st Declension' || hw.includes('-ae') || hw.includes(', -ae') || hw.includes(' -ae')) {
+    if (pe === 'Noun: 1st Declension' || /([,\s]-ae\b|\bae\b)/i.test(hw)) {
       const stem = lemma.replace(/a$/, '');
       return {
         type: 'noun_declension',
@@ -175,8 +239,149 @@ const InflectionEngine = (function () {
       };
     }
 
+    // 5. Declinatio: -ēī / -eī (rēs, diēs)
+    if (pe === 'Noun: 5th Declension' || hw.includes('-ei') || hw.includes('-ēī') || hw.includes('-eī') || hw.includes('diei') || hw.includes('rei')) {
+      const stem = lemma.replace(/(ēs|es)$/, '');
+      return {
+        type: 'noun_declension',
+        title: `${hw} (5. Çekim - Declinatio V)`,
+        modelName: '5. Çekim İsim (Model: rēs, reī f. / diēs, diēī m.)',
+        groupDescription: 'Genetivus tekili -ēī veya -eī ile biten isimler.',
+        gender: hw.includes(' m.') ? 'Masculīnum / Fēminīnum' : 'Fēminīnum (Dişil)',
+        forms: {
+          nom: { sg: lemma, pl: stem + 'ēs' },
+          voc: { sg: lemma, pl: stem + 'ēs' },
+          gen: { sg: stem + 'eī', pl: stem + 'ērum' },
+          dat: { sg: stem + 'eī', pl: stem + 'ēbus' },
+          acc: { sg: stem + 'em', pl: stem + 'ēs' },
+          abl: { sg: stem + 'ē', pl: stem + 'ēbus' }
+        },
+        note: '5. çekimde yalnızca rēs ve diēs çoğulda tam çekim tablosuna sahiptir.'
+      };
+    }
+
+    // 4. Declinatio: -ūs (fructus, cornū)
+    if (pe === 'Noun: 4th Declension' || hw.includes('-ūs') || hw.includes('-us, -ūs') || hw.includes('-u, -ūs') || (hw.includes('-us') && hw.includes(' n.'))) {
+      const stem = lemma.replace(/(us|ū|u)$/, '');
+      if (isNeuter || lemma.endsWith('u') || lemma.endsWith('ū')) {
+        return {
+          type: 'noun_declension',
+          title: `${hw} (4. Çekim Nötr - Declinatio IV)`,
+          modelName: '4. Çekim Nötr İsim (Model: cornū, -ūs n.)',
+          groupDescription: 'Genetivus tekili -ūs ile biten nötr isimler.',
+          gender: 'Neutrum (Nötr)',
+          forms: {
+            nom: { sg: stem + 'ū', pl: stem + 'ua' },
+            voc: { sg: stem + 'ū', pl: stem + 'ua' },
+            gen: { sg: stem + 'ūs', pl: stem + 'uum' },
+            dat: { sg: stem + 'ū', pl: stem + 'ibus' },
+            acc: { sg: stem + 'ū', pl: stem + 'ua' },
+            abl: { sg: stem + 'ū', pl: stem + 'ibus' }
+          },
+          note: 'Tekilde Nom, Voc, Dativus, Accusativus, Ablativus genellikle -ū ile biter.'
+        };
+      }
+      return {
+        type: 'noun_declension',
+        title: `${hw} (4. Çekim - Declinatio IV)`,
+        modelName: '4. Çekim İsim (Model: fructus, -ūs m.)',
+        groupDescription: 'Genetivus tekili -ūs ile biten eril/dişil isimler.',
+        gender: hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)',
+        forms: {
+          nom: { sg: stem + 'us', pl: stem + 'ūs' },
+          voc: { sg: stem + 'us', pl: stem + 'ūs' },
+          gen: { sg: stem + 'ūs', pl: stem + 'uum' },
+          dat: { sg: stem + 'uī', pl: stem + 'ibus' },
+          acc: { sg: stem + 'um', pl: stem + 'ūs' },
+          abl: { sg: stem + 'ū', pl: stem + 'ibus' }
+        },
+        note: 'Genetivus tekil ve çoğul Nominativus/Vocativus/Accusativus -ūs uzundur.'
+      };
+    }
+
+    // 3. Declinatio: -is (rēx, cīvis, corpus, flūmen, pietās, ignis)
+    // DİKKAT: 2. çekimden önce kontrol edilir; böylece -is, -inis, -itis gibi ekler -i ile karışmaz!
+    if (pe === 'Noun: 3rd Declension' || /([,\s]-(is|inis|itis|ētis|idis|ōnis|ōris|oris|eris|uris|ūris|tātis|tatis)\b)/i.test(hw) || (hw.includes('-is') && !hw.includes('-ī') && !hw.includes(' -i '))) {
+      let stem = lemma;
+      const tokens = hw.replace(/[,;:]/g, ' ').split(/\s+/).filter(Boolean);
+      if (tokens.length >= 2) {
+        const genPart = tokens[1];
+        if (/^[a-zA-Z\u0100-\u017F]+is$/i.test(genPart) && !genPart.startsWith('-')) {
+          stem = genPart.replace(/is$/i, '');
+        } else if (genPart.startsWith('-') && genPart.endsWith('is')) {
+          const suf = genPart.slice(1, -2);
+          if (suf === '') {
+            stem = lemma.replace(/(is|e|ēs|es)$/i, '');
+          } else if (/^(tāt|tat)$/i.test(suf) && /(tās|tas|ās|as)$/i.test(lemma)) {
+            // pietās, tempestās, aetās gibi -tātis isimleri için (tās atılıp tāt eklenir)
+            stem = lemma.replace(/(tās|tas|ās|as)$/i, '') + suf;
+          } else if (lemma.endsWith('us') || lemma.endsWith('ūs')) {
+            stem = lemma.slice(0, -2) + suf;
+          } else if (lemma.endsWith('es') || lemma.endsWith('ēs')) {
+            stem = lemma.slice(0, -2) + suf;
+          } else if (lemma.endsWith('en')) {
+            stem = lemma.slice(0, -2) + suf;
+          } else if (lemma.endsWith('o') || lemma.endsWith('ō')) {
+            stem = lemma.slice(0, -1) + suf;
+          } else if (lemma.endsWith('or') || lemma.endsWith('ōr')) {
+            stem = lemma;
+          } else if (lemma.endsWith('x')) {
+            stem = lemma.slice(0, -1) + suf;
+          } else {
+            stem = lemma.replace(/(as|ās|s)?$/i, '') + suf;
+          }
+        }
+      }
+
+      // i-kökü kontrolü (eşheceliler, çift sessizle bitenler, nötr -e, -al, -ar)
+      const isIStem = (lemma.endsWith('is') || lemma.endsWith('e') || /[bcdfghjklmnpqrstvwxz]{2}$/i.test(lemma)) && !hw.includes('corpor') && !hw.includes('tempor') && !hw.includes('-inis');
+      const plGen = isIStem ? stem + 'ium' : stem + 'um';
+      const plNomAccNeu = isIStem ? stem + 'ia' : stem + 'a';
+      const ablSgNeu = isIStem ? stem + 'ī' : stem + 'e';
+
+      if (isNeuter) {
+        return {
+          type: 'noun_declension',
+          title: `${hw} (3. Çekim Nötr - Declinatio III)`,
+          modelName: isIStem ? '3. Çekim i-Kökü Nötr (Model: mare, maris n.)' : '3. Çekim Sessiz Kök Nötr (Model: corpus, corporis n.)',
+          groupDescription: 'Genetivus tekili -is ile biten 3. çekim nötr isimler.',
+          gender: 'Neutrum (Nötr)',
+          forms: {
+            nom: { sg: lemma, pl: plNomAccNeu },
+            voc: { sg: lemma, pl: plNomAccNeu },
+            gen: { sg: stem + 'is', pl: plGen },
+            dat: { sg: stem + 'ī', pl: stem + 'ibus' },
+            acc: { sg: lemma, pl: plNomAccNeu },
+            abl: { sg: ablSgNeu, pl: stem + 'ibus' }
+          },
+          note: isIStem
+            ? 'i-kökü nötrlerde Ablativus tekil -ī, çoğul Nom/Acc -ia, çoğul Genetivus -ium olur.'
+            : 'Sessiz kök nötrlerde çoğul Nom/Acc -a, çoğul Genetivus -um olur.'
+        };
+      }
+
+      return {
+        type: 'noun_declension',
+        title: `${hw} (3. Çekim - Declinatio III)`,
+        modelName: isIStem ? '3. Çekim i-Kökü (Model: cīvis, cīvis m./f. & urbs, urbis f.)' : '3. Çekim Sessiz Kök (Model: rēx, rēgis m.)',
+        groupDescription: 'Genetivus tekili -is ile biten eril/dişil 3. çekim isimler.',
+        gender: hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)',
+        forms: {
+          nom: { sg: lemma, pl: stem + 'ēs' },
+          voc: { sg: lemma, pl: stem + 'ēs' },
+          gen: { sg: stem + 'is', pl: plGen },
+          dat: { sg: stem + 'ī', pl: stem + 'ibus' },
+          acc: { sg: stem + 'em', pl: isIStem ? `${stem}ēs (${stem}īs)` : stem + 'ēs' },
+          abl: { sg: stem + 'e', pl: stem + 'ibus' }
+        },
+        note: isIStem
+          ? 'Eş hece kuralına uyan veya çift sessizle biten i-köklerde çoğul Genetivus -ium olur.'
+          : 'Sessiz köklerde çoğul Genetivus -um ile biter.'
+      };
+    }
+
     // 2. Declinatio: -us / -er / -um (servus, puer, bellum modeli)
-    if (pe === 'Noun: 2nd Declension' || hw.includes('-i ') || hw.includes('-ī') || hw.includes(' -i') || hw.includes(' -ī')) {
+    if (pe === 'Noun: 2nd Declension' || /([,\s]-ī\b|[,\s]-i\b)/i.test(hw) || (!hw.includes('-inis') && (lemma.endsWith('us') || lemma.endsWith('um')))) {
       // 2. Çekim Nötr (-um, -ī)
       if (isNeuter || lemma.endsWith('um') || hw.includes(' n.')) {
         const stem = lemma.replace(/um$/, '');
@@ -201,7 +406,7 @@ const InflectionEngine = (function () {
       // 2. Çekim -er (puer / ager)
       if (lemma.endsWith('er')) {
         let stem = lemma;
-        const tokens = hw.replace(/[,;]/g, '').split(/\s+/);
+        const tokens = hw.replace(/[,;:]/g, ' ').split(/\s+/).filter(Boolean);
         if (tokens.length > 1) {
           const genToken = tokens[1];
           if (genToken.endsWith('i') || genToken.endsWith('ī')) {
@@ -249,138 +454,42 @@ const InflectionEngine = (function () {
       };
     }
 
-    // 4. Declinatio: -ūs (fructus, cornū)
-    if (pe === 'Noun: 4th Declension' || hw.includes('-us') || hw.includes('-ūs')) {
-      const stem = lemma.replace(/(us|ū|u)$/, '');
-      if (isNeuter || lemma.endsWith('u') || lemma.endsWith('ū')) {
-        return {
-          type: 'noun_declension',
-          title: `${hw} (4. Çekim Nötr - Declinatio IV)`,
-          modelName: '4. Çekim Nötr İsim (Model: cornū, -ūs n.)',
-          groupDescription: 'Genetivus tekili -ūs ile biten nötr isimler.',
-          gender: 'Neutrum (Nötr)',
-          forms: {
-            nom: { sg: stem + 'ū', pl: stem + 'ua' },
-            voc: { sg: stem + 'ū', pl: stem + 'ua' },
-            gen: { sg: stem + 'ūs', pl: stem + 'uum' },
-            dat: { sg: stem + 'ū', pl: stem + 'ibus' },
-            acc: { sg: stem + 'ū', pl: stem + 'ua' },
-            abl: { sg: stem + 'ū', pl: stem + 'ibus' }
-          },
-          note: 'Tekilde Nom, Voc, Dativus, Accusativus, Ablativus genellikle -ū ile biter.'
-        };
-      }
-      return {
-        type: 'noun_declension',
-        title: `${hw} (4. Çekim - Declinatio IV)`,
-        modelName: '4. Çekim İsim (Model: fructus, -ūs m.)',
-        groupDescription: 'Genetivus tekili -ūs ile biten eril/dişil isimler.',
-        gender: hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)',
-        forms: {
-          nom: { sg: stem + 'us', pl: stem + 'ūs' },
-          voc: { sg: stem + 'us', pl: stem + 'ūs' },
-          gen: { sg: stem + 'ūs', pl: stem + 'uum' },
-          dat: { sg: stem + 'uī', pl: stem + 'ibus' },
-          acc: { sg: stem + 'um', pl: stem + 'ūs' },
-          abl: { sg: stem + 'ū', pl: stem + 'ibus' }
-        },
-        note: 'Genetivus tekil ve çoğul Nominativus/Vocativus/Accusativus -ūs uzundur.'
-      };
-    }
-
-    // 5. Declinatio: -ēī / -eī (rēs, diēs)
-    if (pe === 'Noun: 5th Declension' || hw.includes('-ei') || hw.includes('-ēī') || hw.includes('-eī') || hw.includes('diei') || hw.includes('rei')) {
-      const stem = lemma.replace(/(ēs|es)$/, '');
-      return {
-        type: 'noun_declension',
-        title: `${hw} (5. Çekim - Declinatio V)`,
-        modelName: '5. Çekim İsim (Model: rēs, reī f. / diēs, diēī m.)',
-        groupDescription: 'Genetivus tekili -ēī veya -eī ile biten isimler.',
-        gender: hw.includes(' m.') ? 'Masculīnum / Fēminīnum' : 'Fēminīnum (Dişil)',
-        forms: {
-          nom: { sg: lemma, pl: stem + 'ēs' },
-          voc: { sg: lemma, pl: stem + 'ēs' },
-          gen: { sg: stem + 'eī', pl: stem + 'ērum' },
-          dat: { sg: stem + 'eī', pl: stem + 'ēbus' },
-          acc: { sg: stem + 'em', pl: stem + 'ēs' },
-          abl: { sg: stem + 'ē', pl: stem + 'ēbus' }
-        },
-        note: '5. çekimde yalnızca rēs ve diēs çoğulda tam çekim tablosuna sahiptir.'
-      };
-    }
-
-    // 3. Declinatio (Varsayılan 3. Çekim: Sessiz Kökler ve i-Kökleri)
+    // Diğer tüm isimler için 3. çekim varsayılan
     let stem = lemma;
-    const tokens = hw.replace(/[,;]/g, '').split(/\s+/);
-    if (tokens.length >= 2) {
-      const genPart = tokens[1];
-      if (/^[a-zA-Z\u0100-\u017F]+is$/i.test(genPart) && !genPart.startsWith('-')) {
-        stem = genPart.replace(/is$/i, '');
-      } else if (genPart.startsWith('-') && genPart.endsWith('is')) {
-        const suf = genPart.slice(1, -2);
-        if (suf === '') {
-          stem = lemma.replace(/(is|e|ēs|es)$/, '');
-        } else if (lemma.endsWith('us') || lemma.endsWith('ūs')) {
-          stem = lemma.slice(0, -2) + suf;
-        } else if (lemma.endsWith('es') || lemma.endsWith('ēs')) {
-          stem = lemma.slice(0, -2) + suf;
-        } else if (lemma.endsWith('en')) {
-          stem = lemma.slice(0, -2) + suf;
-        } else if (lemma.endsWith('o') || lemma.endsWith('ō')) {
-          stem = lemma.slice(0, -1) + suf;
-        } else if (lemma.endsWith('or') || lemma.endsWith('ōr')) {
-          stem = lemma;
-        } else {
-          stem = lemma + suf;
-        }
-      }
-    }
-
-    // i-kökü kontrolü (eşheceliler, çift sessizle bitenler, nötr -e, -al, -ar)
-    const isIStem = (lemma.endsWith('is') || lemma.endsWith('e') || /[bcdfghjklmnpqrstvwxz]{2}$/i.test(lemma)) && !hw.includes('corpor') && !hw.includes('tempor');
-    const plGen = isIStem ? stem + 'ium' : stem + 'um';
-    const plNomAccNeu = isIStem ? stem + 'ia' : stem + 'a';
-    const ablSgNeu = isIStem ? stem + 'ī' : stem + 'e';
-
-    if (isNeuter) {
-      return {
-        type: 'noun_declension',
-        title: `${hw} (3. Çekim Nötr - Declinatio III)`,
-        modelName: isIStem ? '3. Çekim i-Kökü Nötr (Model: mare, maris n.)' : '3. Çekim Sessiz Kök Nötr (Model: corpus, corporis n.)',
-        groupDescription: 'Genetivus tekili -is ile biten 3. çekim nötr isimler.',
-        gender: 'Neutrum (Nötr)',
-        forms: {
-          nom: { sg: lemma, pl: plNomAccNeu },
-          voc: { sg: lemma, pl: plNomAccNeu },
-          gen: { sg: stem + 'is', pl: plGen },
-          dat: { sg: stem + 'ī', pl: stem + 'ibus' },
-          acc: { sg: lemma, pl: plNomAccNeu },
-          abl: { sg: ablSgNeu, pl: stem + 'ibus' }
-        },
-        note: isIStem
-          ? 'i-kökü nötrlerde Ablativus tekil -ī, çoğul Nom/Acc -ia, çoğul Genetivus -ium olur.'
-          : 'Sessiz kök nötrlerde çoğul Nom/Acc -a, çoğul Genetivus -um olur.'
-      };
-    }
-
+    const isIStem = (lemma.endsWith('is') || lemma.endsWith('e') || /[bcdfghjklmnpqrstvwxz]{2}$/i.test(lemma));
     return {
       type: 'noun_declension',
       title: `${hw} (3. Çekim - Declinatio III)`,
-      modelName: isIStem ? '3. Çekim i-Kökü (Model: cīvis, cīvis m./f. & urbs, urbis f.)' : '3. Çekim Sessiz Kök (Model: rēx, rēgis m.)',
-      groupDescription: 'Genetivus tekili -is ile biten eril/dişil 3. çekim isimler.',
-      gender: hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)',
+      modelName: isIStem ? '3. Çekim i-Kökü' : '3. Çekim Sessiz Kök',
+      groupDescription: '3. Çekim isim çekimi.',
+      gender: isNeuter ? 'Neutrum (Nötr)' : (hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)'),
       forms: {
-        nom: { sg: lemma, pl: stem + 'ēs' },
-        voc: { sg: lemma, pl: stem + 'ēs' },
-        gen: { sg: stem + 'is', pl: plGen },
+        nom: { sg: lemma, pl: isNeuter ? (isIStem ? stem + 'ia' : stem + 'a') : stem + 'ēs' },
+        voc: { sg: lemma, pl: isNeuter ? (isIStem ? stem + 'ia' : stem + 'a') : stem + 'ēs' },
+        gen: { sg: stem + 'is', pl: isIStem ? stem + 'ium' : stem + 'um' },
         dat: { sg: stem + 'ī', pl: stem + 'ibus' },
-        acc: { sg: stem + 'em', pl: isIStem ? `${stem}ēs (${stem}īs)` : stem + 'ēs' },
-        abl: { sg: stem + 'e', pl: stem + 'ibus' }
-      },
-      note: isIStem
-        ? 'Eş hece kuralına uyan veya çift sessizle biten i-köklerde çoğul Genetivus -ium olur.'
-        : 'Sessiz köklerde çoğul Genetivus -um ile biter.'
+        acc: { sg: isNeuter ? lemma : stem + 'em', pl: isNeuter ? (isIStem ? stem + 'ia' : stem + 'a') : stem + 'ēs' },
+        abl: { sg: isNeuter && isIStem ? stem + 'ī' : stem + 'e', pl: stem + 'ibus' }
+      }
     };
+  }
+
+  // 1./2. Sınıf -er sıfatlarının gövdesini (-tra, -chra, -era vb. eklerden) doğru çıkarır
+  function getAdjectiveErStem(lemma, femToken) {
+    if (!femToken) return lemma;
+    const fem = femToken.replace(/^[-,\s]+/, '').replace(/a$/, '');
+    if (!fem) return lemma;
+    if (fem.length >= lemma.length - 1) {
+      return fem;
+    }
+    const baseBeforeEr = lemma.slice(0, -2);
+    for (let len = fem.length; len > 0; len--) {
+      const sub = fem.slice(0, len);
+      if (baseBeforeEr.endsWith(sub)) {
+        return baseBeforeEr + fem.slice(len);
+      }
+    }
+    return baseBeforeEr + fem;
   }
 
   // ==========================================================================
@@ -392,11 +501,16 @@ const InflectionEngine = (function () {
     const pe = (word.pos_en || '').trim();
 
     // 1./2. Sınıf Sıfatlar (-us, -a, -um veya -er, -a, -um)
-    if (pe === 'Adjective: 1st and 2nd Declension' || hw.includes('-a, -um') || hw.includes('-a -um') || hw.includes('-um') || lemma.endsWith('us')) {
-      let stem = lemma.replace(/us$/, '').replace(/er$/, '');
-      const tokens = hw.split(/\s+/);
-      if (lemma.endsWith('er') && tokens.length > 1) {
-        stem = tokens[1].replace(/^-/, '').replace(/a$/, '');
+    if (pe === 'Adjective: 1st and 2nd Declension' || hw.includes('-a, -um') || hw.includes('-a -um') || hw.includes('-um') || lemma.endsWith('us') || (lemma.endsWith('er') && !lemma.endsWith('ter') && !lemma.endsWith('or'))) {
+      let stem = '';
+      if (lemma.endsWith('us')) {
+        stem = lemma.slice(0, -2); // Sadece -us atılır (-erus sözcüklerinde -er KORUNUR: superus -> super-)
+      } else if (lemma.endsWith('er')) {
+        const tokens = hw.replace(/[,;:]/g, ' ').split(/\s+/).filter(Boolean);
+        const femToken = tokens.find((t, i) => i > 0 && (t.endsWith('a') || t.endsWith('-a') || t.includes('ra') || t.includes('chra')));
+        stem = getAdjectiveErStem(lemma, femToken);
+      } else {
+        stem = lemma;
       }
 
       return {
@@ -453,7 +567,7 @@ const InflectionEngine = (function () {
 
     // 3. Sınıf Sıfatlar - Tek Sonlanışlı (ingēns, ingentis / fēlīx, fēlīcis)
     let stem = lemma;
-    const tokens = hw.replace(/[,;]/g, '').split(/\s+/);
+    const tokens = hw.replace(/[,;:]/g, ' ').split(/\s+/).filter(Boolean);
     if (tokens.length >= 2 && tokens[1].endsWith('is')) {
       stem = tokens[1].replace(/is$/, '');
     } else {
@@ -491,33 +605,63 @@ const InflectionEngine = (function () {
     const lemma = normalizeLatin(word.lemma || '');
 
     if (lemma === 'is' || lemma === 'ea' || lemma === 'id') {
+      const p = LATIN_REFERENCE_PARADIGMS.pronouns.find(pr => pr.id === 'pron_demonstrative_is');
       return {
         type: 'adjective_declension',
         title: 'is, ea, id (İşaret / 3. Şahıs Zamiri)',
         modelName: 'İşaret Zamiri (Model: is, ea, id)',
         groupDescription: '3. Şahıs / İşaret Zamiri (o eril, o dişil, o nötr)',
-        ...LATIN_REFERENCE_PARADIGMS.pronouns[0]
+        ...p
+      };
+    }
+
+    if (lemma === 'hic' || lemma === 'haec' || lemma === 'hoc') {
+      const p = LATIN_REFERENCE_PARADIGMS.pronouns.find(pr => pr.id === 'pron_demonstrative_hic');
+      return {
+        type: 'adjective_declension',
+        title: 'hic, haec, hoc (İşaret Zamiri)',
+        modelName: 'İşaret Zamiri (Model: hic, haec, hoc)',
+        groupDescription: 'Yakın İşaret Zamiri (bu eril, bu dişil, bu nötr)',
+        ...p
+      };
+    }
+
+    if (lemma === 'ille' || lemma === 'illa' || lemma === 'illud') {
+      const p = LATIN_REFERENCE_PARADIGMS.pronouns.find(pr => pr.id === 'pron_demonstrative_ille');
+      return {
+        type: 'adjective_declension',
+        title: 'ille, illa, illud (İşaret Zamiri)',
+        modelName: 'İşaret Zamiri (Model: ille, illa, illud)',
+        groupDescription: 'Uzak İşaret Zamiri (şu/o eril, şu/o dişil, şu/o nötr)',
+        ...p
       };
     }
 
     if (lemma === 'qui' || lemma === 'quae' || lemma === 'quod') {
+      const p = LATIN_REFERENCE_PARADIGMS.pronouns.find(pr => pr.id === 'pron_relative_qui');
       return {
         type: 'adjective_declension',
         title: 'quī, quae, quod (İlgi Zamiri)',
         modelName: 'İlgi Zamiri (Model: quī, quae, quod)',
         groupDescription: 'Yan cümle bağlayan ilgi zamiri (Relative Pronoun)',
-        ...LATIN_REFERENCE_PARADIGMS.pronouns[1]
+        ...p
       };
     }
 
     if (lemma === 'ego' || lemma === 'tu' || lemma === 'nos' || lemma === 'vos') {
+      const p = LATIN_REFERENCE_PARADIGMS.pronouns.find(pr => pr.id === 'pron_personal_1_2');
       return {
         type: 'adjective_declension',
         title: 'Kişi Zamirleri (ego & tū)',
         modelName: 'Kişi Zamirleri (Model: ego / tū)',
         groupDescription: '1. ve 2. Şahıs Kişi Zamirleri (ben ve sen)',
-        ...LATIN_REFERENCE_PARADIGMS.pronouns[2]
+        ...p
       };
+    }
+
+    // İyelik Zamirleri / Sıfatları: noster, vester, meus, tuus, suus (1./2. Sınıf Sıfat gibi çekilir)
+    if (lemma === 'noster' || lemma === 'vester' || lemma === 'meus' || lemma === 'tuus' || lemma === 'suus') {
+      return generateAdjectiveDeclension(word);
     }
 
     // Genel zamir fallback
@@ -1629,6 +1773,29 @@ const InflectionEngine = (function () {
     return '';
   }
 
+  // Delegated voice-tab click handler so active/passive tabs switch reliably everywhere
+  if (typeof document !== 'undefined') {
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.voice-tab-btn');
+      if (!btn) return;
+      const container = btn.closest('.paradigm-container, .reference-item-card, .modal-body, #pageParadigmsBody, #testDomContainer');
+      if (!container) return;
+      const targetVoice = btn.dataset.voice;
+      if (!targetVoice) return;
+
+      container.querySelectorAll('.voice-tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.voice === targetVoice);
+      });
+      container.querySelectorAll('.verb-voice-panel').forEach(panel => {
+        if (panel.dataset.voice === targetVoice) {
+          panel.style.display = 'block';
+        } else {
+          panel.style.display = 'none';
+        }
+      });
+    });
+  }
+
   return {
     getOrderedCases,
     getWordInflection,
@@ -1636,3 +1803,4 @@ const InflectionEngine = (function () {
     renderReferenceCategoryHtml
   };
 })();
+
