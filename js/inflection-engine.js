@@ -690,39 +690,103 @@ const InflectionEngine = (function () {
       };
     }
 
+    // G) YARI DEPONENT FİİLLER (audeō, gaudeō)
+    // Praesens sistemi: ETKEN (-ō, -s, -t, -mus, -tis, -nt)
+    // Perfectum sistemi: EDİLGEN BİÇİM (-us sum)
+    if (normLemma === 'audeo' || normLemma === 'gaudeo') {
+      const isGaud = normLemma === 'gaudeo';
+      const base = isGaud ? 'gaud' : 'aud';
+      const perfPart = isGaud ? 'gāvīsus' : 'ausus';
+      return {
+        type: 'verb_conjugation',
+        title: `${hw} (Yarı Deponent Fiil - Verbum Semidēpōnēns)`,
+        modelName: `Yarı Deponent Fiil (Model: ${isGaud ? 'gaudeō, gaudēre, gāvīsus sum' : 'audeō, audēre, ausus sum'})`,
+        groupDescription: 'Praesens sistemi etken (-ō, -s, -t...), Perfectum sistemi ise edilgen biçimli ve etken anlamlıdır (-us sum).',
+        parts,
+        tenses: {
+          praesens_act: { name: 'Praesens (Şimdiki / Geniş Zaman)', p1s: base + 'eō', p2s: base + 'ēs', p3s: base + 'et', p1p: base + 'ēmus', p2p: base + 'ētis', p3p: base + 'ent' },
+          imperfectum_act: { name: 'Imperfectum (Geçmişte Süreklilik: -yordu)', p1s: base + 'ēbam', p2s: base + 'ēbās', p3s: base + 'ēbat', p1p: base + 'ēbāmus', p2p: base + 'ēbātis', p3p: base + 'ēbant' },
+          futurum_act: { name: 'Futurum I (Gelecek Zaman: -ecek)', p1s: base + 'ēbō', p2s: base + 'ēbis', p3s: base + 'ēbit', p1p: base + 'ēbimus', p2p: base + 'ēbitis', p3p: base + 'ēbunt' },
+          perfectum_act: { name: 'Perfectum (Görülen Geçmiş: -di)', p1s: perfPart + ' sum', p2s: perfPart + ' es', p3s: perfPart + ' est', p1p: perfPart.replace(/us$/, 'ī') + ' sumus', p2p: perfPart.replace(/us$/, 'ī') + ' estis', p3p: perfPart.replace(/us$/, 'ī') + ' sunt' },
+          plusquamperfectum_act: { name: 'Plusquamperfectum (-mişti)', p1s: perfPart + ' eram', p2s: perfPart + ' erās', p3s: perfPart + ' erat', p1p: perfPart.replace(/us$/, 'ī') + ' erāmus', p2p: perfPart.replace(/us$/, 'ī') + ' erātis', p3p: perfPart.replace(/us$/, 'ī') + ' erant' },
+          futurum_perf_act: { name: 'Futurum II (Bitmiş Gelecek Zaman)', p1s: perfPart + ' erō', p2s: perfPart + ' eris', p3s: perfPart + ' erit', p1p: perfPart.replace(/us$/, 'ī') + ' erimus', p2p: perfPart.replace(/us$/, 'ī') + ' eritis', p3p: perfPart.replace(/us$/, 'ī') + ' erunt' }
+        },
+        note: 'Yarı deponent fiillerin Praesens gövdesi kurallı 2. çekim etken eklerini alır (-eō, -ēs, -et, -ēmus, -ētis, -ent). Sadece Perfectum gövdesi edilgen yapılıdır ve etken tercüme edilir.'
+      };
+    }
+
     // 2. DEPONENT FİİLLER (Biçimce Edilgen, Anlamca Etken)
-    const isDeponent = pe === 'Verb: Deponent' || lemma.endsWith('or') || hw.includes('sum') || word.pos_tr?.includes('Deponens');
+    // SADECE ve SADECE pos_en === 'Verb: Deponent' olan gerçek deponent fiiller!
+    // (Supinum eki -sum olan etken fiiller asla deponent yapılmaz!)
+    const isDeponent = pe === 'Verb: Deponent';
     if (isDeponent) {
-      const baseStem = lemma.replace(/ior$/, '').replace(/or$/, '');
+      let depGroup = 3;
+      let model = 'sequor, sequī, secūtus sum';
+
+      if (hw.includes('ari') || hw.includes('ārī') || hw.includes(' -ari')) {
+        depGroup = 1;
+        model = 'cōnor, cōnārī, cōnātus sum (1. Çekim Deponent)';
+      } else if (hw.includes('eri') || hw.includes('ērī') || hw.includes(' -eri') || lemma.endsWith('eor')) {
+        depGroup = 2;
+        model = 'vereor, verērī, veritus sum (2. Çekim Deponent)';
+      } else if (hw.includes('iri') || hw.includes('īrī') || hw.includes(' -iri') || lemma === 'orior' || lemma === 'experior') {
+        depGroup = 4;
+        model = 'orior, orīrī, ortus sum / experior (4. Çekim Deponent)';
+      } else if (lemma.endsWith('ior')) {
+        depGroup = 35;
+        model = 'patior, patī, passus sum (3. Çekim -ior Deponent)';
+      } else {
+        depGroup = 3;
+        model = 'sequor, sequī, secūtus sum (3. Çekim Deponent)';
+      }
+
+      const baseStem = lemma.replace(/ior$/, '').replace(/eor$/, '').replace(/or$/, '');
       const perfPart = parts.perf ? parts.perf.replace(/\s+sum$/, '') : (baseStem + 't');
 
-      let p2s = baseStem + 'ris', p3s = baseStem + 'tur', p1p = baseStem + 'mur', p2p = baseStem + 'minī', p3p = baseStem + 'ntur';
-      let imp1s = baseStem + 'bar', imp2s = baseStem + 'bāris', imp3s = baseStem + 'bātur', imp1p = baseStem + 'bāmur', imp2p = baseStem + 'bāminī', imp3p = baseStem + 'bantur';
-      let fut1s = baseStem + 'bor', fut2s = baseStem + 'beris', fut3s = baseStem + 'bitur', fut1p = baseStem + 'bimur', fut2p = baseStem + 'biminī', fut3p = baseStem + 'buntur';
+      let p1s = lemma, p2s = '', p3s = '', p1p = '', p2p = '', p3p = '';
+      let imp1s = '', imp2s = '', imp3s = '', imp1p = '', imp2p = '', imp3p = '';
+      let fut1s = '', fut2s = '', fut3s = '', fut1p = '', fut2p = '', fut3p = '';
 
-      // 3. ve 4. çekim deponentlerde futurum (-ar, -ēris...)
-      if (hw.includes('ī') || hw.includes('īrī') || hw.includes(' -i') || lemma.endsWith('ior') || hw.includes('sequi')) {
-        fut1s = baseStem + 'ar';
-        fut2s = baseStem + 'ēris';
-        fut3s = baseStem + 'ētur';
-        fut1p = baseStem + 'ēmur';
-        fut2p = baseStem + 'ēminī';
-        fut3p = baseStem + 'entur';
+      if (depGroup === 1) {
+        // 1. Çekim Deponent (cōnor, cōnārī)
+        p2s = baseStem + 'āris'; p3s = baseStem + 'ātur'; p1p = baseStem + 'āmur'; p2p = baseStem + 'āminī'; p3p = baseStem + 'antur';
+        imp1s = baseStem + 'ābar'; imp2s = baseStem + 'ābāris'; imp3s = baseStem + 'ābātur'; imp1p = baseStem + 'ābāmur'; imp2p = baseStem + 'ābāminī'; imp3p = baseStem + 'ābantur';
+        fut1s = baseStem + 'ābor'; fut2s = baseStem + 'āberis'; fut3s = baseStem + 'ābitur'; fut1p = baseStem + 'ābimur'; fut2p = baseStem + 'ābiminī'; fut3p = baseStem + 'ābuntur';
+      } else if (depGroup === 2) {
+        // 2. Çekim Deponent (vereor, verērī)
+        p2s = baseStem + 'ēris'; p3s = baseStem + 'ētur'; p1p = baseStem + 'ēmur'; p2p = baseStem + 'ēminī'; p3p = baseStem + 'entur';
+        imp1s = baseStem + 'ēbar'; imp2s = baseStem + 'ēbāris'; imp3s = baseStem + 'ēbātur'; imp1p = baseStem + 'ēbāmur'; imp2p = baseStem + 'ēbāminī'; imp3p = baseStem + 'ēbantur';
+        fut1s = baseStem + 'ēbor'; fut2s = baseStem + 'ēberis'; fut3s = baseStem + 'ēbitur'; fut1p = baseStem + 'ēbimur'; fut2p = baseStem + 'ēbiminī'; fut3p = baseStem + 'ēbuntur';
+      } else if (depGroup === 3) {
+        // 3. Çekim Deponent (sequor, sequī)
+        p2s = baseStem + 'eris'; p3s = baseStem + 'itur'; p1p = baseStem + 'imur'; p2p = baseStem + 'iminī'; p3p = baseStem + 'untur';
+        imp1s = baseStem + 'ēbar'; imp2s = baseStem + 'ēbāris'; imp3s = baseStem + 'ēbātur'; imp1p = baseStem + 'ēbāmur'; imp2p = baseStem + 'ēbāminī'; imp3p = baseStem + 'ēbantur';
+        fut1s = baseStem + 'ar'; fut2s = baseStem + 'ēris'; fut3s = baseStem + 'ētur'; fut1p = baseStem + 'ēmur'; fut2p = baseStem + 'ēminī'; fut3p = baseStem + 'entur';
+      } else if (depGroup === 35) {
+        // 3. Çekim -ior Deponent (patior, patī)
+        p2s = baseStem + 'eris'; p3s = baseStem + 'itur'; p1p = baseStem + 'imur'; p2p = baseStem + 'iminī'; p3p = baseStem + 'iuntur';
+        imp1s = baseStem + 'iēbar'; imp2s = baseStem + 'iēbāris'; imp3s = baseStem + 'iēbātur'; imp1p = baseStem + 'iēbāmur'; imp2p = baseStem + 'iēbāminī'; imp3p = baseStem + 'iēbantur';
+        fut1s = baseStem + 'iar'; fut2s = baseStem + 'iēris'; fut3s = baseStem + 'iētur'; fut1p = baseStem + 'iēmur'; fut2p = baseStem + 'iēminī'; fut3p = baseStem + 'ientur';
+      } else {
+        // 4. Çekim Deponent (orior, orīrī)
+        p2s = baseStem + 'īris'; p3s = baseStem + 'ītur'; p1p = baseStem + 'īmur'; p2p = baseStem + 'īminī'; p3p = baseStem + 'iuntur';
+        imp1s = baseStem + 'iēbar'; imp2s = baseStem + 'iēbāris'; imp3s = baseStem + 'iēbātur'; imp1p = baseStem + 'iēbāmur'; imp2p = baseStem + 'iēbāminī'; imp3p = baseStem + 'iēbantur';
+        fut1s = baseStem + 'iar'; fut2s = baseStem + 'iēris'; fut3s = baseStem + 'iētur'; fut1p = baseStem + 'iēmur'; fut2p = baseStem + 'iēminī'; fut3p = baseStem + 'ientur';
       }
 
       return {
         type: 'verb_conjugation',
         title: `${hw} (Deponent Fiil)`,
-        modelName: 'Deponent Fiil (Model: sequor, sequī, secūtus sum)',
+        modelName: `Deponent Fiil (Model: ${model})`,
         groupDescription: 'Biçimce Edilgen (Passīvum), Anlamca Etken (Actīvum).',
         parts,
         tenses: {
-          praesens_act: { name: 'Praesens (Şimdiki / Geniş Zaman)', p1s: lemma, p2s, p3s, p1p, p2p, p3p },
+          praesens_act: { name: 'Praesens (Şimdiki / Geniş Zaman)', p1s, p2s, p3s, p1p, p2p, p3p },
           imperfectum_act: { name: 'Imperfectum (Geçmişte Süreklilik: -yordu)', p1s: imp1s, p2s: imp2s, p3s: imp3s, p1p: imp1p, p2p: imp2p, p3p: imp3p },
           futurum_act: { name: 'Futurum I (Gelecek Zaman: -ecek)', p1s: fut1s, p2s: fut2s, p3s: fut3s, p1p: fut1p, p2p: fut2p, p3p: fut3p },
-          perfectum_act: { name: 'Perfectum (Görülen Geçmiş: -di)', p1s: perfPart + 'us sum', p2s: perfPart + 'us es', p3s: perfPart + 'us est', p1p: perfPart + 'ī sumus', p2p: perfPart + 'ī estis', p3p: perfPart + 'ī sunt' },
-          plusquamperfectum_act: { name: 'Plusquamperfectum (-mişti)', p1s: perfPart + 'us eram', p2s: perfPart + 'us erās', p3s: perfPart + 'us erat', p1p: perfPart + 'ī erāmus', p2p: perfPart + 'ī erātis', p3p: perfPart + 'ī erant' },
-          futurum_perf_act: { name: 'Futurum II (Bitmiş Gelecek Zaman)', p1s: perfPart + 'us erō', p2s: perfPart + 'us eris', p3s: perfPart + 'us erit', p1p: perfPart + 'ī erimus', p2p: perfPart + 'ī eritis', p3p: perfPart + 'ī erunt' }
+          perfectum_act: { name: 'Perfectum (Görülen Geçmiş: -di)', p1s: perfPart + ' sum', p2s: perfPart + ' es', p3s: perfPart + ' est', p1p: perfPart.replace(/us$/, 'ī') + ' sumus', p2p: perfPart.replace(/us$/, 'ī') + ' estis', p3p: perfPart.replace(/us$/, 'ī') + ' sunt' },
+          plusquamperfectum_act: { name: 'Plusquamperfectum (-mişti)', p1s: perfPart + ' us eram', p2s: perfPart + ' us erās', p3s: perfPart + ' us erat', p1p: perfPart.replace(/us$/, 'ī') + ' erāmus', p2p: perfPart.replace(/us$/, 'ī') + ' erātis', p3p: perfPart.replace(/us$/, 'ī') + ' erant' },
+          futurum_perf_act: { name: 'Futurum II (Bitmiş Gelecek Zaman)', p1s: perfPart + ' us erō', p2s: perfPart + ' us eris', p3s: perfPart + ' us erit', p1p: perfPart.replace(/us$/, 'ī') + ' erimus', p2p: perfPart.replace(/us$/, 'ī') + ' eritis', p3p: perfPart.replace(/us$/, 'ī') + ' erunt' }
         },
         note: 'Deponent fiiller biçimce edilgen sonlanışlar almalarına rağmen daima etken olarak çevrilir.'
       };
