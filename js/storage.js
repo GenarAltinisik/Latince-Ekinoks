@@ -11,7 +11,8 @@ const StorageManager = (function () {
     THEME: PREFIX + 'theme',
     CARD_DIRECTION: PREFIX + 'card_direction',
     ACTIVE_SET: PREFIX + 'active_set',
-    QUIZ_HISTORY: PREFIX + 'quiz_history'
+    QUIZ_HISTORY: PREFIX + 'quiz_history',
+    CASE_ORDER: PREFIX + 'case_order'
   };
 
   function getSetFromStorage(key) {
@@ -138,6 +139,17 @@ const StorageManager = (function () {
     },
     setActiveSet(setNo) {
       localStorage.setItem(KEYS.ACTIVE_SET, setNo);
+    },
+
+    // Case Order Preference (Default: NVGDAcAb)
+    getCaseOrder() {
+      const order = localStorage.getItem(KEYS.CASE_ORDER);
+      return (order && ['NVGDAcAb', 'NVAcGDAb', 'NGDAcAbV'].includes(order)) ? order : 'NVGDAcAb';
+    },
+    setCaseOrder(order) {
+      if (['NVGDAcAb', 'NVAcGDAb', 'NGDAcAbV'].includes(order)) {
+        localStorage.setItem(KEYS.CASE_ORDER, order);
+      }
     },
 
     // Reset progress

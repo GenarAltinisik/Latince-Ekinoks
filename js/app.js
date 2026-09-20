@@ -308,6 +308,9 @@ const App = (function () {
         </div>
 
         <div class="word-card-bottom">
+          <button class="btn-inflection btn-show-inflection" data-id="${word.id}" title="Bu Kelimenin Çekim Tablosunu Aç">
+            📜 Çekimler
+          </button>
           <a href="${word.logeion_url}" target="_blank" rel="noopener noreferrer" class="logeion-link-btn" title="Logeion Lewis & Short Sözlüğünde Aç">
             📖 Logeion Sözlük ↗
           </a>
@@ -392,6 +395,15 @@ const App = (function () {
         const id = parseInt(btn.dataset.id, 10);
         const state = StorageManager.toggleLearned(id);
         syncWordLearnState(id, state);
+      });
+    });
+
+    // Show inflection table modal
+    container.querySelectorAll('.btn-show-inflection').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = parseInt(btn.dataset.id, 10);
+        openWordInflectionModal(id);
       });
     });
 
@@ -628,6 +640,65 @@ const App = (function () {
     });
   }
 
+  // ==========================================================================
+  // Inflection & Paradigm Modals
+  // ==========================================================================
+  let activeInflectionWord = null;
+  let activeReferenceCategory = 'nouns';
+
+  function openWordInflectionModal(wordId) {
+    const word = DataManager.getWordById(wordId);
+    if (!word) return;
+
+    activeInflectionWord = word;
+    renderWordInflectionContent();
+
+    const logeionBtn = document.getElementById('inflectionModalLogeionBtn');
+    if (logeionBtn) logeionBtn.href = word.logeion_url;
+
+    openModal('inflectionModal');
+  }
+
+  function renderWordInflectionContent() {
+    if (!activeInflectionWord) return;
+    const body = document.getElementById('inflectionModalBody');
+    if (!body) return;
+
+    const caseOrder = StorageManager.getCaseOrder();
+
+    // Update active button state
+    document.querySelectorAll('#wordCaseOrderButtons .case-order-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.order === caseOrder);
+    });
+
+    body.innerHTML = InflectionEngine.renderWordInflectionHtml(activeInflectionWord, caseOrder);
+  }
+
+  function openReferenceParadigmsModal(category = 'nouns') {
+    activeReferenceCategory = category;
+    renderReferenceParadigmsContent();
+    openModal('paradigmsModal');
+  }
+
+  function renderReferenceParadigmsContent() {
+    const body = document.getElementById('paradigmsModalBody');
+    if (!body) return;
+
+    const caseOrder = StorageManager.getCaseOrder();
+
+    // Update case order buttons in ref modal
+    document.querySelectorAll('#refCaseOrderButtons .case-order-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.order === caseOrder);
+    });
+
+    // Update category pills in ref modal
+    document.querySelectorAll('#refCategoryPills .filter-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.cat === activeReferenceCategory);
+    });
+
+    body.innerHTML = InflectionEngine.renderReferenceCategoryHtml(activeReferenceCategory, caseOrder);
+  }
+
   // Modal setup
   function setupModals() {
     document.querySelectorAll('.modal-close-btn, .modal-overlay').forEach(el => {
@@ -635,6 +706,37 @@ const App = (function () {
         if (e.target === el) {
           closeAllModals();
         }
+      });
+    });
+
+    // Banner Çekim Rehberi button
+    document.getElementById('bannerParadigmsBtn')?.addEventListener('click', () => {
+      openReferenceParadigmsModal('nouns');
+    });
+
+    // Word modal case order buttons
+    document.querySelectorAll('#wordCaseOrderButtons .case-order-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const order = btn.dataset.order;
+        StorageManager.setCaseOrder(order);
+        renderWordInflectionContent();
+      });
+    });
+
+    // Ref modal case order buttons
+    document.querySelectorAll('#refCaseOrderButtons .case-order-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const order = btn.dataset.order;
+        StorageManager.setCaseOrder(order);
+        renderReferenceParadigmsContent();
+      });
+    });
+
+    // Ref modal category pills
+    document.querySelectorAll('#refCategoryPills .filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        activeReferenceCategory = pill.dataset.cat;
+        renderReferenceParadigmsContent();
       });
     });
   }
@@ -653,12 +755,16 @@ const App = (function () {
     switchView,
     openModal,
     closeAllModals,
+    openWordInflectionModal,
+    openReferenceParadigmsModal,
     renderDictionaryList,
     renderGoalDashboard,
     syncWordStarState,
     syncWordLearnState
   };
 })();
+
+window.App = App;
 
 // Initialize on DOM ready
 document.addEventListener('DOMContentLoaded', () => {

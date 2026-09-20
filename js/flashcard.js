@@ -284,8 +284,13 @@ const FlashcardApp = (function () {
     document.getElementById('cardNextBtn')?.addEventListener('click', nextCard);
     document.getElementById('cardKnowBtn')?.addEventListener('click', markKnown);
     document.getElementById('cardRepeatBtn')?.addEventListener('click', markRepeat);
-    document.getElementById('cardStarBtn')?.addEventListener('click', toggleStarCurrent);
-    document.getElementById('cardAudioBtn')?.addEventListener('click', speakCurrentWord);
+    document.getElementById('cardInflectionBtn')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const currentWord = deck[currentIndex];
+      if (currentWord && window.App?.openWordInflectionModal) {
+        App.openWordInflectionModal(currentWord.id);
+      }
+    });
     document.getElementById('cardShuffleBtn')?.addEventListener('click', shuffleDeck);
 
     // Direction Toggle

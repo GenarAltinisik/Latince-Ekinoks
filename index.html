@@ -111,6 +111,7 @@
       </div>
       <div class="banner-actions">
         <button id="bannerGoGoalBtn" class="btn-secondary-sm">🎯 Hedef Takipçisi</button>
+        <button id="bannerParadigmsBtn" class="btn-secondary-sm">📚 Çekim Rehberi</button>
         <button id="bannerAboutBtn" class="btn-secondary-sm">ℹ️ Kaynaklar & Rehber</button>
       </div>
     </div>
@@ -247,6 +248,9 @@
             <div class="card-face-header">
               <span id="backGrammarFull" class="tag-badge pos-tag">Bağlaç</span>
               <div class="word-card-actions">
+                <button id="cardInflectionBtn" class="btn-inflection" title="Bu Kelimenin Çekim Tablosunu Aç">
+                  📜 Çekimler
+                </button>
                 <a id="cardLogeionBtn" href="#" target="_blank" rel="noopener noreferrer" class="logeion-link-btn" title="Logeion Lewis & Short Sözlüğünde Aç">
                   📖 Logeion ↗
                 </a>
@@ -531,6 +535,77 @@
     </div>
   </div>
 
+  <!-- Word Specific Inflection Modal -->
+  <div id="inflectionModal" class="modal-overlay">
+    <div class="modal-content modal-lg">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; flex-wrap: wrap; gap: 0.65rem; margin-right: 1.5rem;">
+          <h3 style="margin: 0; font-family: var(--font-serif); color: var(--primary);">📜 Sözcük Çekim Tablosu</h3>
+          <div class="case-order-picker-wrap">
+            <span class="case-order-label">Casus Sırası:</span>
+            <div class="case-order-buttons" id="wordCaseOrderButtons">
+              <button class="case-order-btn active" data-order="NVGDAcAb" title="Nominativus, Vocativus, Genetivus, Dativus, Accusativus, Ablativus">NVGDAcAb (Varsayılan)</button>
+              <button class="case-order-btn" data-order="NVAcGDAb" title="Nominativus, Vocativus, Accusativus, Genetivus, Dativus, Ablativus">NVAcGDAb</button>
+              <button class="case-order-btn" data-order="NGDAcAbV" title="Nominativus, Genetivus, Dativus, Accusativus, Ablativus, Vocativus">NGDAcAbV</button>
+            </div>
+          </div>
+        </div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+      <div id="inflectionModalBody" class="modal-body">
+        <!-- Dynamic content rendered by InflectionEngine -->
+      </div>
+      <div class="modal-footer" style="justify-content: space-between;">
+        <a id="inflectionModalLogeionBtn" href="#" target="_blank" rel="noopener noreferrer" class="logeion-link-btn" style="padding: 0.5rem 0.85rem;">
+          📖 Logeion Sözlükte Aç ↗
+        </a>
+        <button class="btn-decision btn-know modal-close-btn">Kapat</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- General Reference Paradigms Modal -->
+  <div id="paradigmsModal" class="modal-overlay">
+    <div class="modal-content modal-xl">
+      <div class="modal-header">
+        <div>
+          <h3 style="margin: 0 0 0.25rem 0; font-family: var(--font-serif); color: var(--primary);">📚 Genel Latince Çekim Rehberi</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin: 0;">
+            1-5. İsim Çekimleri (Declinatio), Sıfatlar, Zamirler ve 1-4. Fiil Çekimleri (Coniugatio) standart model tabloları.
+          </p>
+        </div>
+        <button class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Controls bar: Category tabs and Case order selector -->
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1.25rem; background-color: var(--bg-surface-soft); border-bottom: 1px solid var(--border-color); flex-wrap: wrap; gap: 0.65rem;">
+        <div class="paradigm-nav-pills" id="refCategoryPills">
+          <button class="filter-pill active" data-cat="nouns">🏛️ İsimler (1-5)</button>
+          <button class="filter-pill" data-cat="adjectives">✨ Sıfatlar</button>
+          <button class="filter-pill" data-cat="verbs">⚡ Fiiller & Deponent</button>
+          <button class="filter-pill" data-cat="pronouns">👥 Zamirler</button>
+        </div>
+
+        <div class="case-order-picker-wrap">
+          <span class="case-order-label">Casus Sırası:</span>
+          <div class="case-order-buttons" id="refCaseOrderButtons">
+            <button class="case-order-btn active" data-order="NVGDAcAb">NVGDAcAb (Varsayılan)</button>
+            <button class="case-order-btn" data-order="NVAcGDAb">NVAcGDAb</button>
+            <button class="case-order-btn" data-order="NGDAcAbV">NGDAcAbV</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="paradigmsModalBody" class="modal-body" style="max-height: 65vh; overflow-y: auto;">
+        <!-- Dynamic content rendered by InflectionEngine -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-decision btn-know modal-close-btn">Kapat</button>
+      </div>
+    </div>
+  </div>
+
   <!-- App Footer -->
   <footer class="app-footer">
     <div class="footer-container">
@@ -550,8 +625,10 @@
 
   <!-- Scripts -->
   <script src="data/latin_core_data.js"></script>
+  <script src="data/latin_paradigms.js"></script>
   <script src="js/storage.js"></script>
   <script src="js/data-manager.js"></script>
+  <script src="js/inflection-engine.js"></script>
   <script src="js/flashcard.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/app.js"></script>
