@@ -325,9 +325,6 @@ const FlashcardApp = (function () {
       } else if (e.code === 'Digit2' || e.code === 'KeyR') {
         e.preventDefault();
         markRepeat();
-      } else if (e.code === 'KeyS') {
-        e.preventDefault();
-        speakCurrentWord();
       } else if (e.code === 'KeyF') {
         e.preventDefault();
         toggleStarCurrent();

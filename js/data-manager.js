@@ -86,7 +86,7 @@ const DataManager = (function () {
       return data.filter(w => w.set_no === setNo);
     },
 
-    // First 400 words (Dr. Ekin Öyken's semester goal)
+    // First 400 words (Doç. Dr. Ekin Öyken's semester goal)
     getTermTargetWords() {
       return data.filter(w => w.is_term_target);
     },

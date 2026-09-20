@@ -278,7 +278,6 @@ const App = (function () {
             #${word.rank} ${word.is_term_target ? '🎯 Hedef' : ''}
           </span>
           <div class="word-card-actions">
-            <button class="btn-icon-sm btn-speak" title="Telaffuzu Dinle" data-text="${word.lemma}">🔊</button>
             <button class="btn-icon-sm btn-star ${isStarred ? 'starred' : ''}" title="Yıldızla / Zorlandıklarıma Ekle" data-id="${word.id}">
               ${isStarred ? '★' : '☆'}
             </button>
@@ -393,20 +392,6 @@ const App = (function () {
         const id = parseInt(btn.dataset.id, 10);
         const state = StorageManager.toggleLearned(id);
         syncWordLearnState(id, state);
-      });
-    });
-
-    // Audio speak
-    container.querySelectorAll('.btn-speak').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const text = btn.dataset.text;
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          const utter = new SpeechSynthesisUtterance(text);
-          utter.rate = 0.85;
-          window.speechSynthesis.speak(utter);
-        }
       });
     });
 

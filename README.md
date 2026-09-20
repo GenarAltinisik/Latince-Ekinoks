@@ -1,7 +1,7 @@
 # 🏛️ Latince Ekinoks (Aequinoctium Latinum)
 
 > **İstanbul Üniversitesi Edebiyat Fakültesi Eski Yunan Dili ve Edebiyatı Anabilim Dalı**  
-> **Latince Gramer 3** Dersi (Dr. Öğr. Üyesi Ekin Öyken) İçin Özel Olarak Tasarlanmış Dijital Latince Kelime & Flashcard Platformu
+> **Latince Gramer 3** Dersi (Doç. Dr. Ekin Öyken) İçin Özel Olarak Tasarlanmış Dijital Latince Kelime & Flashcard Platformu
 
 ---
 
@@ -76,4 +76,4 @@ Ardından tarayıcınızda `http://localhost:8000` adresini açabilirsiniz.
 - **Veri Tabanı:** [Dickinson College Commentaries - Latin Core Vocabulary](https://dcc.dickinson.edu/latin-core-list1) (LASLA verileri)
 - **Türkçe Çeviri:** Mert İnan & Emin Çomoğlu (İstanbul Üniversitesi Eski Yunan Dili ve Edebiyatı Mezunları)
 - **Sözlük Altyapısı:** [Logeion - University of Chicago](https://logeion.uchicago.edu/) (Lewis & Short, Gaffiot)
-- **Ders & İlham:** Dr. Öğr. Üyesi Ekin Öyken (İstanbul Üniversitesi Latince Gramer 3)
+- **Ders & İlham:** Doç. Dr. Ekin Öyken (İstanbul Üniversitesi Latince Gramer 3)
