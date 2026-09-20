@@ -785,6 +785,32 @@ const App = (function () {
         renderReferenceParadigmsContent();
       });
     });
+
+    // Verb Voice Switcher (Etken / Edilgen) delegated click handler
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('.voice-tab-btn');
+      if (!btn) return;
+
+      const container = btn.closest('.paradigm-container, .reference-item-card');
+      if (!container) return;
+
+      const targetVoice = btn.dataset.voice;
+      if (!targetVoice) return;
+
+      // Toggle active state on voice buttons within this card
+      container.querySelectorAll('.voice-tab-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.voice === targetVoice);
+      });
+
+      // Toggle panels within this card
+      container.querySelectorAll('.verb-voice-panel').forEach(panel => {
+        if (panel.dataset.voice === targetVoice) {
+          panel.style.display = 'block';
+        } else {
+          panel.style.display = 'none';
+        }
+      });
+    });
   }
 
   function openModal(modalId) {

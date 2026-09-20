@@ -1501,3 +1501,111 @@ body.mode-en .translation-tr {
   box-shadow: var(--shadow-sm);
 }
 
+/* Verb Voice Switcher (Etken / Edilgen) */
+.verb-voice-switcher {
+  display: flex;
+  gap: 0.5rem;
+  background-color: var(--bg-surface-soft);
+  padding: 0.35rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: 1.15rem;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.voice-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 1.15rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  user-select: none;
+}
+
+.voice-tab-btn:hover {
+  color: var(--text-main);
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+[data-theme="dark"] .voice-tab-btn:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.voice-tab-btn.active {
+  background-color: var(--bg-surface);
+  color: var(--primary);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+}
+
+.voice-tab-btn .voice-icon {
+  font-size: 1rem;
+}
+
+.verb-voice-panel {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Intransitive Verb Notice Box */
+.intransitive-notice-box {
+  display: flex;
+  gap: 0.9rem;
+  align-items: flex-start;
+  padding: 1.25rem 1.35rem;
+  background-color: var(--bg-surface-soft);
+  border: 1.5px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  margin: 0.75rem 0;
+}
+
+.intransitive-notice-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.intransitive-notice-content strong {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--primary);
+  margin-bottom: 0.35rem;
+}
+
+.intransitive-notice-content p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Deponent Verb Badge Banner */
+.deponent-badge-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.75rem 1rem;
+  background: linear-gradient(135deg, rgba(197, 160, 89, 0.12), var(--bg-surface-soft));
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  color: var(--text-main);
+  margin-bottom: 1.15rem;
+}
+
+

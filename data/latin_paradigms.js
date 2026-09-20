@@ -347,19 +347,35 @@ const LATIN_REFERENCE_PARADIGMS = {
         perfectum_act: { name: 'Perfectum (Görülen Geçmiş: -di)', p1s: 'amāvī', p2s: 'amāvistī', p3s: 'amāvit', p1p: 'amāvimus', p2p: 'amāvistis', p3p: 'amāvērunt (-ēre)' },
         plusquamperfectum_act: { name: 'Plusquamperfectum (Öncelikli Geçmiş: -mişti)', p1s: 'amāveram', p2s: 'amāverās', p3s: 'amāverat', p1p: 'amāverāmus', p2p: 'amāverātis', p3p: 'amāverant' },
         futurum_perf_act: { name: 'Futurum II (Gelecekte Bitmişlik)', p1s: 'amāverō', p2s: 'amāveris', p3s: 'amāverit', p1p: 'amāverimus', p2p: 'amāveritis', p3p: 'amāverint' }
+      },
+      passiveTenses: {
+        praesens_pass: { name: 'Praesens Passīvum (Geniş/Şimdiki Zaman Edilgen: sevilirim)', p1s: 'amor', p2s: 'amāris (amāre)', p3s: 'amātur', p1p: 'amāmur', p2p: 'amāminī', p3p: 'amantur' },
+        imperfectum_pass: { name: 'Imperfectum Passīvum (Geçmişte Süreklilik: seviliyordum)', p1s: 'amābar', p2s: 'amābāris', p3s: 'amābātur', p1p: 'amābāmur', p2p: 'amābāminī', p3p: 'amābantur' },
+        futurum_pass: { name: 'Futurum I Passīvum (Gelecek Zaman: sevileceğim)', p1s: 'amābor', p2s: 'amāberis', p3s: 'amābitur', p1p: 'amābimur', p2p: 'amābiminī', p3p: 'amābuntur' },
+        perfectum_pass: { name: 'Perfectum Passīvum (Görülen Geçmiş: sevildim)', p1s: 'amātus sum', p2s: 'amātus es', p3s: 'amātus est', p1p: 'amātī sumus', p2p: 'amātī estis', p3p: 'amātī sunt' },
+        plusquamperfectum_pass: { name: 'Plusquamperfectum Passīvum (Öncelikli Geçmiş: sevilmiştim)', p1s: 'amātus eram', p2s: 'amātus erās', p3s: 'amātus erat', p1p: 'amātī erāmus', p2p: 'amātī erātis', p3p: 'amātī erant' },
+        futurum_perf_pass: { name: 'Futurum II Passīvum (Bitmiş Gelecek: sevilmiş olacağım)', p1s: 'amātus erō', p2s: 'amātus eris', p3s: 'amātus erit', p1p: 'amātī erimus', p2p: 'amātī eritis', p3p: 'amātī erunt' }
       }
     },
     {
       id: 'verb_coniug_2',
       title: '2. Çekim Fiil (Coniugatio II) -ēre',
-      model: 'habeō, habēre, habuī, habitum (sahip olmak)',
+      model: 'habeō, habēre, habuī, habitum (sahip olmak) / videō (görmek)',
       tenses: {
-        praesens_act: { name: 'Praesens', p1s: 'habeō', p2s: 'habēs', p3s: 'habet', p1p: 'habēmus', p2p: 'habētis', p3p: 'habent' },
-        imperfectum_act: { name: 'Imperfectum', p1s: 'habēbam', p2s: 'habēbās', p3s: 'habēbat', p1p: 'habēbāmus', p2p: 'habēbātis', p3p: 'habēbant' },
+        praesens_act: { name: 'Praesens (Geniş/Şimdiki Zaman)', p1s: 'habeō', p2s: 'habēs', p3s: 'habet', p1p: 'habēmus', p2p: 'habētis', p3p: 'habent' },
+        imperfectum_act: { name: 'Imperfectum (Geçmişte Süreklilik: -yordu)', p1s: 'habēbam', p2s: 'habēbās', p3s: 'habēbat', p1p: 'habēbāmus', p2p: 'habēbātis', p3p: 'habēbant' },
         futurum_act: { name: 'Futurum I', p1s: 'habēbō', p2s: 'habēbis', p3s: 'habēbit', p1p: 'habēbimus', p2p: 'habēbitis', p3p: 'habēbunt' },
         perfectum_act: { name: 'Perfectum', p1s: 'habuī', p2s: 'habuistī', p3s: 'habuit', p1p: 'habuimus', p2p: 'habuistis', p3p: 'habuērunt' },
         plusquamperfectum_act: { name: 'Plusquamperfectum', p1s: 'habueram', p2s: 'habuerās', p3s: 'habuerat', p1p: 'habuerāmus', p2p: 'habuerātis', p3p: 'habuerant' },
         futurum_perf_act: { name: 'Futurum II', p1s: 'habuerō', p2s: 'habueris', p3s: 'habuerit', p1p: 'habuerimus', p2p: 'habueritis', p3p: 'habuerint' }
+      },
+      passiveTenses: {
+        praesens_pass: { name: 'Praesens Passīvum (Geniş/Şimdiki Zaman Edilgen)', p1s: 'habeor', p2s: 'habēris', p3s: 'habētur', p1p: 'habēmur', p2p: 'habēminī', p3p: 'habentur' },
+        imperfectum_pass: { name: 'Imperfectum Passīvum (Geçmişte Süreklilik: -iliyordu)', p1s: 'habēbar', p2s: 'habēbāris', p3s: 'habēbātur', p1p: 'habēbāmur', p2p: 'habēbāminī', p3p: 'habēbantur' },
+        futurum_pass: { name: 'Futurum I Passīvum (Gelecek Zaman: -ilecek)', p1s: 'habēbor', p2s: 'habēberis', p3s: 'habēbitur', p1p: 'habēbimur', p2p: 'habēbiminī', p3p: 'habēbuntur' },
+        perfectum_pass: { name: 'Perfectum Passīvum (Görülen Geçmiş: -ildi)', p1s: 'habitus sum', p2s: 'habitus es', p3s: 'habitus est', p1p: 'habitī sumus', p2p: 'habitī estis', p3p: 'habitī sunt' },
+        plusquamperfectum_pass: { name: 'Plusquamperfectum Passīvum (-ilmişti)', p1s: 'habitus eram', p2s: 'habitus erās', p3s: 'habitus erat', p1p: 'habitī erāmus', p2p: 'habitī erātis', p3p: 'habitī erant' },
+        futurum_perf_pass: { name: 'Futurum II Passīvum (Bitmiş Gelecek: -ilmiş olacak)', p1s: 'habitus erō', p2s: 'habitus eris', p3s: 'habitus erit', p1p: 'habitī erimus', p2p: 'habitī eritis', p3p: 'habitī erunt' }
       }
     },
     {
@@ -373,6 +389,14 @@ const LATIN_REFERENCE_PARADIGMS = {
         perfectum_act: { name: 'Perfectum', p1s: 'lēgī', p2s: 'lēgistī', p3s: 'lēgit', p1p: 'lēgimus', p2p: 'lēgistis', p3p: 'lēgērunt' },
         plusquamperfectum_act: { name: 'Plusquamperfectum', p1s: 'lēgeram', p2s: 'lēgerās', p3s: 'lēgerat', p1p: 'lēgerāmus', p2p: 'lēgerātis', p3p: 'lēgerant' },
         futurum_perf_act: { name: 'Futurum II', p1s: 'lēgerō', p2s: 'lēgeris', p3s: 'lēgerit', p1p: 'lēgerimus', p2p: 'lēgeritis', p3p: 'lēgerint' }
+      },
+      passiveTenses: {
+        praesens_pass: { name: 'Praesens Passīvum (Geniş/Şimdiki Zaman Edilgen)', p1s: 'legor', p2s: 'legeris', p3s: 'legitur', p1p: 'legimur', p2p: 'legiminī', p3p: 'leguntur' },
+        imperfectum_pass: { name: 'Imperfectum Passīvum (Geçmişte Süreklilik: -iliyordu)', p1s: 'legēbar', p2s: 'legēbāris', p3s: 'legēbātur', p1p: 'legēbāmur', p2p: 'legēbāminī', p3p: 'legēbantur' },
+        futurum_pass: { name: 'Futurum I Passīvum (Gelecek Zaman: -ar, -ēris...)', p1s: 'legar', p2s: 'legēris', p3s: 'legētur', p1p: 'legēmur', p2p: 'legēminī', p3p: 'legentur' },
+        perfectum_pass: { name: 'Perfectum Passīvum (Görülen Geçmiş: -ildi)', p1s: 'lēctus sum', p2s: 'lēctus es', p3s: 'lēctus est', p1p: 'lēctī sumus', p2p: 'lēctī estis', p3p: 'lēctī sunt' },
+        plusquamperfectum_pass: { name: 'Plusquamperfectum Passīvum (-ilmişti)', p1s: 'lēctus eram', p2s: 'lēctus erās', p3s: 'lēctus erat', p1p: 'lēctī erāmus', p2p: 'lēctī erātis', p3p: 'lēctī erant' },
+        futurum_perf_pass: { name: 'Futurum II Passīvum (Bitmiş Gelecek: -ilmiş olacak)', p1s: 'lēctus erō', p2s: 'lēctus eris', p3s: 'lēctus erit', p1p: 'lēctī erimus', p2p: 'lēctī eritis', p3p: 'lēctī erunt' }
       }
     },
     {
@@ -386,6 +410,14 @@ const LATIN_REFERENCE_PARADIGMS = {
         perfectum_act: { name: 'Perfectum', p1s: 'cēpī', p2s: 'cēpistī', p3s: 'cēpit', p1p: 'cēpimus', p2p: 'cēpistis', p3p: 'cēpērunt' },
         plusquamperfectum_act: { name: 'Plusquamperfectum', p1s: 'cēperam', p2s: 'cēperās', p3s: 'cēperat', p1p: 'cēperāmus', p2p: 'cēperātis', p3p: 'cēperant' },
         futurum_perf_act: { name: 'Futurum II', p1s: 'cēperō', p2s: 'cēperis', p3s: 'cēperit', p1p: 'cēperimus', p2p: 'cēperitis', p3p: 'cēperint' }
+      },
+      passiveTenses: {
+        praesens_pass: { name: 'Praesens Passīvum (Geniş/Şimdiki Zaman Edilgen)', p1s: 'capior', p2s: 'caperis', p3s: 'capitur', p1p: 'capimur', p2p: 'capiminī', p3p: 'capiuntur' },
+        imperfectum_pass: { name: 'Imperfectum Passīvum (Geçmişte Süreklilik: -iliyordu)', p1s: 'capiēbar', p2s: 'capiēbāris', p3s: 'capiēbātur', p1p: 'capiēbāmur', p2p: 'capiēbāminī', p3p: 'capiēbantur' },
+        futurum_pass: { name: 'Futurum I Passīvum (-iar, -iēris...)', p1s: 'capiar', p2s: 'capiēris', p3s: 'capiētur', p1p: 'capiēmur', p2p: 'capiēminī', p3p: 'capientur' },
+        perfectum_pass: { name: 'Perfectum Passīvum (Görülen Geçmiş: -ildi)', p1s: 'captus sum', p2s: 'captus es', p3s: 'captus est', p1p: 'captī sumus', p2p: 'captī estis', p3p: 'captī sunt' },
+        plusquamperfectum_pass: { name: 'Plusquamperfectum Passīvum (-ilmişti)', p1s: 'captus eram', p2s: 'captus erās', p3s: 'captus erat', p1p: 'captī erāmus', p2p: 'captī erātis', p3p: 'captī erant' },
+        futurum_perf_pass: { name: 'Futurum II Passīvum (Bitmiş Gelecek: -ilmiş olacak)', p1s: 'captus erō', p2s: 'captus eris', p3s: 'captus erit', p1p: 'captī erimus', p2p: 'captī eritis', p3p: 'captī erunt' }
       }
     },
     {
@@ -399,6 +431,14 @@ const LATIN_REFERENCE_PARADIGMS = {
         perfectum_act: { name: 'Perfectum', p1s: 'audīvī', p2s: 'audīvistī', p3s: 'audīvit', p1p: 'audīvimus', p2p: 'audīvistis', p3p: 'audīvērunt' },
         plusquamperfectum_act: { name: 'Plusquamperfectum', p1s: 'audīveram', p2s: 'audīverās', p3s: 'audīverat', p1p: 'audīverāmus', p2p: 'audīverātis', p3p: 'audīverant' },
         futurum_perf_act: { name: 'Futurum II', p1s: 'audīverō', p2s: 'audīveris', p3s: 'audīverit', p1p: 'audīverimus', p2p: 'audīveritis', p3p: 'audīverint' }
+      },
+      passiveTenses: {
+        praesens_pass: { name: 'Praesens Passīvum (Geniş/Şimdiki Zaman Edilgen: işitilirim)', p1s: 'audior', p2s: 'audīris', p3s: 'audītur', p1p: 'audīmur', p2p: 'audīminī', p3p: 'audiuntur' },
+        imperfectum_pass: { name: 'Imperfectum Passīvum (Geçmişte Süreklilik: işitiliyordum)', p1s: 'audiēbar', p2s: 'audiēbāris', p3s: 'audiēbātur', p1p: 'audiēbāmur', p2p: 'audiēbāminī', p3p: 'audiēbantur' },
+        futurum_pass: { name: 'Futurum I Passīvum (Gelecek Zaman: işitileceğim)', p1s: 'audiar', p2s: 'audiēris', p3s: 'audiētur', p1p: 'audiēmur', p2p: 'audiēminī', p3p: 'audientur' },
+        perfectum_pass: { name: 'Perfectum Passīvum (Görülen Geçmiş: işitildim)', p1s: 'audītus sum', p2s: 'audītus es', p3s: 'audītus est', p1p: 'audītī sumus', p2p: 'audītī estis', p3p: 'audītī sunt' },
+        plusquamperfectum_pass: { name: 'Plusquamperfectum Passīvum (Öncelikli Geçmiş: işitilmiştim)', p1s: 'audītus eram', p2s: 'audītus erās', p3s: 'audītus erat', p1p: 'audītī erāmus', p2p: 'audītī erātis', p3p: 'audītī erant' },
+        futurum_perf_pass: { name: 'Futurum II Passīvum (Bitmiş Gelecek: işitilmiş olacağım)', p1s: 'audītus erō', p2s: 'audītus eris', p3s: 'audītus erit', p1p: 'audītī erimus', p2p: 'audītī eritis', p3p: 'audītī erunt' }
       }
     },
     {
