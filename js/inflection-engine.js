@@ -266,10 +266,10 @@ const InflectionEngine = (function () {
       if (isNeuter || lemma.endsWith('u') || lemma.endsWith('ū')) {
         return {
           type: 'noun_declension',
-          title: `${hw} (4. Çekim Nötr - Declinatio IV)`,
-          modelName: '4. Çekim Nötr İsim (Model: cornū, -ūs n.)',
-          groupDescription: 'Genetivus tekili -ūs ile biten nötr isimler.',
-          gender: 'Neutrum (Nötr)',
+          title: `${hw} (4. Çekim Cinssiz - Declinatio IV)`,
+          modelName: '4. Çekim Cinssiz İsim (Model: cornū, -ūs n.)',
+          groupDescription: 'Genetivus tekili -ūs ile biten cinssiz isimler.',
+          gender: 'Neutrum (Cinssiz)',
           forms: {
             nom: { sg: stem + 'ū', pl: stem + 'ua' },
             voc: { sg: stem + 'ū', pl: stem + 'ua' },
@@ -333,7 +333,7 @@ const InflectionEngine = (function () {
         }
       }
 
-      // i-kökü kontrolü (eşheceliler, çift sessizle bitenler, nötr -e, -al, -ar)
+      // i-gövdesi kontrolü (eşheceliler, çift sessizle bitenler, cinssiz -e, -al, -ar)
       const isIStem = (lemma.endsWith('is') || lemma.endsWith('e') || /[bcdfghjklmnpqrstvwxz]{2}$/i.test(lemma)) && !hw.includes('corpor') && !hw.includes('tempor') && !hw.includes('-inis');
       const plGen = isIStem ? stem + 'ium' : stem + 'um';
       const plNomAccNeu = isIStem ? stem + 'ia' : stem + 'a';
@@ -342,10 +342,10 @@ const InflectionEngine = (function () {
       if (isNeuter) {
         return {
           type: 'noun_declension',
-          title: `${hw} (3. Çekim Nötr - Declinatio III)`,
-          modelName: isIStem ? '3. Çekim i-Kökü Nötr (Model: mare, maris n.)' : '3. Çekim Sessiz Kök Nötr (Model: corpus, corporis n.)',
-          groupDescription: 'Genetivus tekili -is ile biten 3. çekim nötr isimler.',
-          gender: 'Neutrum (Nötr)',
+          title: `${hw} (3. Çekim Cinssiz - Declinatio III)`,
+          modelName: isIStem ? '3. Çekim Cinssiz i-Gövdeliler (Model: mare, maris n.)' : '3. Çekim Cinssiz Sessiz Gövdeliler (Model: corpus, corporis n.)',
+          groupDescription: 'Genetivus tekili -is ile biten 3. çekim cinssiz isimler.',
+          gender: 'Neutrum (Cinssiz)',
           forms: {
             nom: { sg: lemma, pl: plNomAccNeu },
             voc: { sg: lemma, pl: plNomAccNeu },
@@ -355,15 +355,15 @@ const InflectionEngine = (function () {
             abl: { sg: ablSgNeu, pl: stem + 'ibus' }
           },
           note: isIStem
-            ? 'i-kökü nötrlerde Ablativus tekil -ī, çoğul Nom/Acc -ia, çoğul Genetivus -ium olur.'
-            : 'Sessiz kök nötrlerde çoğul Nom/Acc -a, çoğul Genetivus -um olur.'
+            ? 'Cinssiz i-gövdeli isimlerde Ablativus tekil -ī, çoğul Nom/Acc -ia, çoğul Genetivus -ium olur.'
+            : 'Sessiz gövdeli cinssiz isimlerde çoğul Nom/Acc -a, çoğul Genetivus -um olur.'
         };
       }
 
       return {
         type: 'noun_declension',
         title: `${hw} (3. Çekim - Declinatio III)`,
-        modelName: isIStem ? '3. Çekim i-Kökü (Model: cīvis, cīvis m./f. & urbs, urbis f.)' : '3. Çekim Sessiz Kök (Model: rēx, rēgis m.)',
+        modelName: isIStem ? '3. Çekim i-Gövdeliler (Model: cīvis, cīvis m./f. & urbs, urbis f.)' : '3. Çekim Sessiz Gövdeliler (Model: rēx, rēgis m.)',
         groupDescription: 'Genetivus tekili -is ile biten eril/dişil 3. çekim isimler.',
         gender: hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)',
         forms: {
@@ -375,22 +375,22 @@ const InflectionEngine = (function () {
           abl: { sg: stem + 'e', pl: stem + 'ibus' }
         },
         note: isIStem
-          ? 'Eş hece kuralına uyan veya çift sessizle biten i-köklerde çoğul Genetivus -ium olur.'
-          : 'Sessiz köklerde çoğul Genetivus -um ile biter.'
+          ? 'Eş heceli (parisyllaba) veya gövdesi çift sessizle biten i-gövdeli isimlerde çoğul Genetivus -ium olur.'
+          : 'Sessiz gövdeli isimlerde çoğul Genetivus -um ile biter.'
       };
     }
 
     // 2. Declinatio: -us / -er / -um (servus, puer, bellum modeli)
     if (pe === 'Noun: 2nd Declension' || /([,\s]-ī\b|[,\s]-i\b)/i.test(hw) || (!hw.includes('-inis') && (lemma.endsWith('us') || lemma.endsWith('um')))) {
-      // 2. Çekim Nötr (-um, -ī)
+      // 2. Çekim Cinssiz (-um, -ī)
       if (isNeuter || lemma.endsWith('um') || hw.includes(' n.')) {
         const stem = lemma.replace(/um$/, '');
         return {
           type: 'noun_declension',
-          title: `${hw} (2. Çekim Nötr - Declinatio II)`,
-          modelName: '2. Çekim Nötr İsim (Model: bellum, -ī n.)',
-          groupDescription: 'Genetivus tekili -ī ile biten nötr isimler.',
-          gender: 'Neutrum (Nötr)',
+          title: `${hw} (2. Çekim Cinssiz - Declinatio II)`,
+          modelName: '2. Çekim Cinssiz İsim (Model: bellum, -ī n.)',
+          groupDescription: 'Genetivus tekili -ī ile biten cinssiz isimler.',
+          gender: 'Neutrum (Cinssiz)',
           forms: {
             nom: { sg: stem + 'um', pl: stem + 'a' },
             voc: { sg: stem + 'um', pl: stem + 'a' },
@@ -399,7 +399,7 @@ const InflectionEngine = (function () {
             acc: { sg: stem + 'um', pl: stem + 'a' },
             abl: { sg: stem + 'ō', pl: stem + 'īs' }
           },
-          note: 'Nötr kuralı: Nominativus, Vocativus ve Accusativus her zaman aynıdır; çoğulda daima -a ile biter.'
+          note: 'Cinssiz kuralı: Nominativus, Vocativus ve Accusativus her zaman aynıdır; çoğulda daima -a ile biter.'
         };
       }
 
@@ -460,9 +460,9 @@ const InflectionEngine = (function () {
     return {
       type: 'noun_declension',
       title: `${hw} (3. Çekim - Declinatio III)`,
-      modelName: isIStem ? '3. Çekim i-Kökü' : '3. Çekim Sessiz Kök',
+      modelName: isIStem ? '3. Çekim i-Gövdeliler' : '3. Çekim Sessiz Gövdeliler',
       groupDescription: '3. Çekim isim çekimi.',
-      gender: isNeuter ? 'Neutrum (Nötr)' : (hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)'),
+      gender: isNeuter ? 'Neutrum (Cinssiz)' : (hw.includes(' f.') ? 'Fēminīnum (Dişil)' : 'Masculīnum (Eril)'),
       forms: {
         nom: { sg: lemma, pl: isNeuter ? (isIStem ? stem + 'ia' : stem + 'a') : stem + 'ēs' },
         voc: { sg: lemma, pl: isNeuter ? (isIStem ? stem + 'ia' : stem + 'a') : stem + 'ēs' },
@@ -496,12 +496,11 @@ const InflectionEngine = (function () {
   // SIFAT ÇEKİMİ ÜRETİCİSİ (ADJECTIVE DECLENSION)
   // ==========================================================================
   function generateAdjectiveDeclension(word) {
-    const hw = word.headword || '';
-    const lemma = word.lemma || '';
-    const pe = (word.pos_en || '').trim();
+    const hw = word.headword || word.lemma || '';
+    const lemma = normalizeLatin(word.lemma || '');
 
-    // 1./2. Sınıf Sıfatlar (-us, -a, -um veya -er, -a, -um)
-    if (pe === 'Adjective: 1st and 2nd Declension' || hw.includes('-a, -um') || hw.includes('-a -um') || hw.includes('-um') || lemma.endsWith('us') || (lemma.endsWith('er') && !lemma.endsWith('ter') && !lemma.endsWith('or'))) {
+    // 1. ve 2. Sınıf Sıfatlar: -us, -a, -um veya -er, -(e)ra, -(e)rum
+    if (hw.includes('-a, -um') || hw.includes('-a -um') || (lemma.endsWith('us') && !hw.includes('-is')) || lemma.endsWith('er')) {
       let stem = '';
       if (lemma.endsWith('us')) {
         stem = lemma.slice(0, -2); // Sadece -us atılır (-erus sözcüklerinde -er KORUNUR: superus -> super-)
@@ -517,7 +516,7 @@ const InflectionEngine = (function () {
         type: 'adjective_declension',
         title: `${hw} (1. ve 2. Sınıf Sıfat)`,
         modelName: '1. ve 2. Sınıf Sıfat (Model: bonus, bona, bonum)',
-        groupDescription: 'Eril: 2. çekim (-us), Dişil: 1. çekim (-a), Nötr: 2. çekim (-um).',
+        groupDescription: 'Eril: 2. çekim (-us), Dişil: 1. çekim (-a), Cinssiz: 2. çekim (-um).',
         singular: {
           nom: { m: lemma, f: stem + 'a', n: stem + 'um' },
           voc: { m: lemma.endsWith('er') ? lemma : stem + 'e', f: stem + 'a', n: stem + 'um' },
@@ -537,14 +536,14 @@ const InflectionEngine = (function () {
       };
     }
 
-    // 3. Sınıf Sıfatlar - İki Sonlanışlı (-is, -e: omnis, omne)
+    // 3. Sınıf Sıfatlar - İki Bitimli (-is, -e: omnis, omne)
     if (hw.includes('-e') || lemma.endsWith('is')) {
       const stem = lemma.replace(/is$/, '');
       return {
         type: 'adjective_declension',
-        title: `${hw} (3. Sınıf Sıfat - İki Sonlanışlı)`,
-        modelName: '3. Sınıf Sıfat (Model: omnis, omne)',
-        groupDescription: 'Eril ve Dişil: -is, Nötr: -e (Tam i-Kökü Çekimi).',
+        title: `${hw} (3. Sınıf Sıfat - İki Bitimli)`,
+        modelName: '3. Sınıf İki Bitimli Sıfat (Model: omnis, omne)',
+        groupDescription: 'Eril ve Dişil: -is, Cinssiz: -e (i-Gövdesi Çekimi).',
         singular: {
           nom: { m: stem + 'is', f: stem + 'is', n: stem + 'e' },
           voc: { m: stem + 'is', f: stem + 'is', n: stem + 'e' },
@@ -561,11 +560,11 @@ const InflectionEngine = (function () {
           acc: { m: stem + 'ēs', f: stem + 'ēs', n: stem + 'ia' },
           abl: { m: stem + 'ibus', f: stem + 'ibus', n: stem + 'ibus' }
         },
-        note: '3. sınıf sıfatlarda Ablativus tekil tüm cinsiyetlerde -ī ile biter; çoğul Genetivus -ium olur.'
+        note: '3. sınıf sıfatlarda Ablativus tekil tüm cinslerde -ī ile biter; çoğul Genetivus -ium olur.'
       };
     }
 
-    // 3. Sınıf Sıfatlar - Tek Sonlanışlı (ingēns, ingentis / fēlīx, fēlīcis)
+    // 3. Sınıf Sıfatlar - Tek Bitimli (ingēns, ingentis / fēlīx, fēlīcis)
     let stem = lemma;
     const tokens = hw.replace(/[,;:]/g, ' ').split(/\s+/).filter(Boolean);
     if (tokens.length >= 2 && tokens[1].endsWith('is')) {
@@ -576,9 +575,9 @@ const InflectionEngine = (function () {
 
     return {
       type: 'adjective_declension',
-      title: `${hw} (3. Sınıf Sıfat - Tek Sonlanışlı)`,
-      modelName: '3. Sınıf Tek Sonlanışlı Sıfat (Model: ingēns, ingentis)',
-      groupDescription: 'Tüm cinsiyetler için tek Nominativus formu (-ns, -x vb.).',
+      title: `${hw} (3. Sınıf Sıfat - Tek Bitimli)`,
+      modelName: '3. Sınıf Tek Bitimli Sıfat (Model: ingēns, ingentis)',
+      groupDescription: 'Tüm cinsler için tek Nominativus biçimi (-ns, -x vb.).',
       singular: {
         nom: { m: lemma, f: lemma, n: lemma },
         voc: { m: lemma, f: lemma, n: lemma },
@@ -610,7 +609,7 @@ const InflectionEngine = (function () {
         type: 'adjective_declension',
         title: 'is, ea, id (İşaret / 3. Şahıs Zamiri)',
         modelName: 'İşaret Zamiri (Model: is, ea, id)',
-        groupDescription: '3. Şahıs / İşaret Zamiri (o eril, o dişil, o nötr)',
+        groupDescription: '3. Şahıs / İşaret Zamiri (o eril, o dişil, o cinssiz)',
         ...p
       };
     }
@@ -621,7 +620,7 @@ const InflectionEngine = (function () {
         type: 'adjective_declension',
         title: 'hic, haec, hoc (İşaret Zamiri)',
         modelName: 'İşaret Zamiri (Model: hic, haec, hoc)',
-        groupDescription: 'Yakın İşaret Zamiri (bu eril, bu dişil, bu nötr)',
+        groupDescription: 'Yakın İşaret Zamiri (bu eril, bu dişil, bu cinssiz)',
         ...p
       };
     }
@@ -632,7 +631,7 @@ const InflectionEngine = (function () {
         type: 'adjective_declension',
         title: 'ille, illa, illud (İşaret Zamiri)',
         modelName: 'İşaret Zamiri (Model: ille, illa, illud)',
-        groupDescription: 'Uzak İşaret Zamiri (şu/o eril, şu/o dişil, şu/o nötr)',
+        groupDescription: 'Uzak İşaret Zamiri (şu/o eril, şu/o dişil, şu/o cinssiz)',
         ...p
       };
     }
@@ -1020,7 +1019,7 @@ const InflectionEngine = (function () {
         hasPassive: false,
         tenses: depTenses,
         activeTenses: depTenses,
-        note: 'Deponent fiiller biçimce edilgen sonlanışlar almalarına rağmen daima etken olarak çevrilir. Bu sebeple ayrı bir etken çekimleri yoktur.'
+        note: 'Deponent fiiller biçimce edilgen bitimler (ekler) almalarına rağmen daima etken olarak çevrilir. Bu sebeple ayrı bir etken çekimleri yoktur.'
       };
     }
 
@@ -1040,11 +1039,11 @@ const InflectionEngine = (function () {
     } else if (pe === 'Verb: 3rd Conjugation -o' || pe === 'Verb: 3rd Conjugation' || hw.includes('ere') || hw.includes('-ere')) {
       conjGroup = 3;
       modelName = '3. Çekim Fiil (Model: dīcō, dīcere / legō, legere)';
-      groupDescription = '3. Çekim (-ere) konsonant kök fiil çekimi.';
+      groupDescription = '3. Çekim (-ere) sessiz harf gövdeli fiil çekimi.';
     } else if (pe === 'Verb: 4th Conjugation' || hw.includes('īre') || hw.includes('-īre')) {
       conjGroup = 4;
       modelName = '4. Çekim Fiil (Model: audiō, audīre, audīvī, audītum)';
-      groupDescription = '4. Çekim (-īre) saf i-kökü fiil çekimi.';
+      groupDescription = '4. Çekim (-īre) i-gövdeli fiil çekimi.';
     }
 
     // Köklerin tespiti (Headword'den gelen uzun seslileri koru: dīcō -> dīc)
@@ -1320,7 +1319,7 @@ const InflectionEngine = (function () {
                   <th class="col-case">Casus (Türkçe Karşılık)</th>
                   <th>Masculīnum (Eril)</th>
                   <th>Fēminīnum (Dişil)</th>
-                  <th>Neutrum (Nötr)</th>
+                  <th>Neutrum (Cinssiz)</th>
                 </tr>
               </thead>
               <tbody>
@@ -1350,7 +1349,7 @@ const InflectionEngine = (function () {
                   <th class="col-case">Casus (Türkçe Karşılık)</th>
                   <th>Masculīnum (Eril)</th>
                   <th>Fēminīnum (Dişil)</th>
-                  <th>Neutrum (Nötr)</th>
+                  <th>Neutrum (Cinssiz)</th>
                 </tr>
               </thead>
               <tbody>
@@ -1412,7 +1411,7 @@ const InflectionEngine = (function () {
               ${renderVerbTenseCards(data.passiveTenses)}
             </div>
             <div class="paradigm-footer-note" style="margin-top: 0.85rem;">
-              💡 <strong>Not (Cinsiyet Uyumu):</strong> Perfectum gövdesi edilgen çekimlerinde (Perfectum, Plusquamperfectum, Futurum II) sıfat-fiil öznenin cinsiyetine uyar. Yukarıdaki tabloda varsayılan eril (Masculīnum: <em>-us / -ī</em>) biçimler verilmiştir. Özne dişil ise <em>-a / -ae</em> (örn: <em>audīta sum</em>, <em>audītae sumus</em>), nötr ise <em>-um / -a</em> (örn: <em>audītum est</em>, <em>audīta sunt</em>) kullanılır.
+              💡 <strong>Not (Cinsiyet Uyumu):</strong> Perfectum gövdesi edilgen çekimlerinde (Perfectum, Plusquamperfectum, Futurum II) sıfat-fiil öznenin cinsiyetine uyar. Yukarıdaki tabloda varsayılan eril (Masculīnum: <em>-us / -ī</em>) biçimler verilmiştir. Özne dişil ise <em>-a / -ae</em> (örn: <em>audīta sum</em>, <em>audītae sumus</em>), cinssiz ise <em>-um / -a</em> (örn: <em>audītum est</em>, <em>audīta sunt</em>) kullanılır.
             </div>
           </div>
         `;
@@ -1532,7 +1531,7 @@ const InflectionEngine = (function () {
                       <th class="col-case">Tekil (Singulāris)</th>
                       <th>Eril (Masculīnum)</th>
                       <th>Dişil (Fēminīnum)</th>
-                      <th>Nötr (Neutrum)</th>
+                      <th>Cinssiz (Neutrum)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1558,7 +1557,7 @@ const InflectionEngine = (function () {
                       <th class="col-case">Çoğul (Plūrālis)</th>
                       <th>Eril (Masculīnum)</th>
                       <th>Dişil (Fēminīnum)</th>
-                      <th>Nötr (Neutrum)</th>
+                      <th>Cinssiz (Neutrum)</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -1686,7 +1685,7 @@ const InflectionEngine = (function () {
                     ${renderVerbTenseCards(item.passiveTenses)}
                   </div>
                   <div class="paradigm-footer-note" style="margin-top: 0.85rem;">
-                    💡 <strong>Not (Cinsiyet Uyumu):</strong> Perfectum gövdesi edilgen çekimlerinde (Perfectum, Plusquamperfectum, Futurum II) sıfat-fiil öznenin cinsiyetine uyar (Eril: <em>-us / -ī</em>, Dişil: <em>-a / -ae</em>, Nötr: <em>-um / -a</em>).
+                    💡 <strong>Not (Cinsiyet Uyumu):</strong> Perfectum gövdesi edilgen çekimlerinde (Perfectum, Plusquamperfectum, Futurum II) sıfat-fiil öznenin cinsiyetine uyar (Eril: <em>-us / -ī</em>, Dişil: <em>-a / -ae</em>, Cinssiz: <em>-um / -a</em>).
                   </div>
                 </div>
               ` : `
@@ -1712,7 +1711,7 @@ const InflectionEngine = (function () {
         <div class="reference-section-list">
           <div style="margin: 0.5rem 0 1.25rem 0; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border-color);">
             <h3 style="font-family: var(--font-serif); color: var(--primary); font-size: 1.3rem; margin: 0 0 0.25rem 0;">⚡ Temel Düzensiz Fiiller (Verba Anōmala)</h3>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Klasik metinlerde en sık karşılaşılan ve kurallı çekimlere uymayan kök fiiller.</p>
+            <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0;">Klasik metinlerde en sık karşılaşılan ve kurallı çekim gruplarına girmeyen düzensiz fiiller (verba anōmala / irregularia).</p>
           </div>
           ${irregularVerbs.map(item => `
             <div class="reference-item-card">

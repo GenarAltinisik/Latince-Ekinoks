@@ -1,7 +1,7 @@
 // Latince Ekinoks - Kapsamlı Çekim Paradigmaları ve Referans Veritabanı
 
 const LATIN_CASE_INFO = {
-  nom: { key: 'nom', name: 'Nominativus', tr: 'Yalın hal', abbr: 'Nom.' },
+  nom: { key: 'nom', name: 'Nominativus', tr: 'Özne hâli', abbr: 'Nom.' },
   voc: { key: 'voc', name: 'Vocativus', tr: 'Seslenme hali ("Ey...")', abbr: 'Voc.' },
   gen: { key: 'gen', name: 'Genetivus', tr: '-in hali (Tamlayan)', abbr: 'Gen.' },
   dat: { key: 'dat', name: 'Dativus', tr: '-e hali (Yönelme)', abbr: 'Dat.' },
@@ -79,8 +79,8 @@ const LATIN_REFERENCE_PARADIGMS = {
     },
     {
       id: 'noun_decl_2_um',
-      title: '2. Çekim (Declinatio II) -um (Nötr)',
-      subtitle: '-um, -ī (Nötr / Neutrum)',
+      title: '2. Çekim (Declinatio II) -um (Cinssiz)',
+      subtitle: '-um, -ī (Cinssiz / Neutrum)',
       model: 'bellum, -ī n. (savaş)',
       forms: {
         nom: { sg: 'bellum', pl: 'bella' },
@@ -90,12 +90,12 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { sg: 'bellum', pl: 'bella' },
         abl: { sg: 'bellō', pl: 'bellīs' }
       },
-      note: 'Nötr kuralı: Nom, Voc, Acc her zaman birbirinin aynısıdır; çoğulda daima -a ile biter.'
+      note: 'Cinssiz kuralı: Nom, Voc, Acc her zaman birbirinin aynısıdır; çoğulda daima -a ile biter.'
     },
     {
       id: 'noun_decl_3_cons_mf',
-      title: '3. Çekim (Declinatio III) - Sessiz Kökler (m./f.)',
-      subtitle: 'Çeşitli sonlanışlar, -is (Eril/Dişil)',
+      title: '3. Çekim (Declinatio III) - Sessiz Gövdeliler (Eril/Dişil)',
+      subtitle: 'Çeşitli bitimler, -is (Eril/Dişil)',
       model: 'rēx, rēgis m. (kral)',
       forms: {
         nom: { sg: 'rēx', pl: 'rēgēs' },
@@ -105,12 +105,12 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { sg: 'rēgem', pl: 'rēgēs' },
         abl: { sg: 'rēge', pl: 'rēgibus' }
       },
-      note: 'Sessiz köklerde Genetivus çoğul -um ile biter; Ablativus tekil -e ile biter.'
+      note: 'Sessiz gövdelilerde Genetivus çoğul -um ile biter; Ablativus tekil -e ile biter.'
     },
     {
       id: 'noun_decl_3_cons_n',
-      title: '3. Çekim (Declinatio III) - Sessiz Kökler (Nötr)',
-      subtitle: 'Nötr Sessiz Kökler',
+      title: '3. Çekim (Declinatio III) - Cinssiz Sessiz Gövdeliler',
+      subtitle: 'Cinssiz Sessiz Gövdeliler',
       model: 'corpus, corporis n. (beden, gövde)',
       forms: {
         nom: { sg: 'corpus', pl: 'corpora' },
@@ -120,12 +120,12 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { sg: 'corpus', pl: 'corpora' },
         abl: { sg: 'corpore', pl: 'corporibus' }
       },
-      note: 'Nötr çoğul Nom, Voc, Acc -a ile biter.'
+      note: 'Cinssiz kuralı: Çoğul Nom, Voc, Acc daima -a ile biter.'
     },
     {
       id: 'noun_decl_3_istem_mf',
-      title: '3. Çekim (Declinatio III) - i-Kökler (m./f.)',
-      subtitle: 'Eş Hece / İki Sessiz Kuralı (-is, -is)',
+      title: '3. Çekim (Declinatio III) - i-Gövdeliler (Eril/Dişil)',
+      subtitle: 'Eş Heceliler ve Çift Sessizliler (-is, -is)',
       model: 'cīvis, cīvis m./f. (yurttaş) & urbs, urbis f. (şehir)',
       forms: {
         nom: { sg: 'cīvis / urbs', pl: 'cīvēs / urbēs' },
@@ -135,12 +135,12 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { sg: 'cīvem / urbem', pl: 'cīvēs (cīvīs) / urbēs' },
         abl: { sg: 'cīve / urbe', pl: 'cīvibus / urbibus' }
       },
-      note: 'i-köklerde Genetivus çoğul eki mutlaka -ium olur.'
+      note: 'i-gövdeli isimlerde Genetivus çoğul eki mutlaka -ium olur.'
     },
     {
       id: 'noun_decl_3_istem_n',
-      title: '3. Çekim (Declinatio III) - Saf i-Kökler (Nötr)',
-      subtitle: '-e, -al, -ar ile biten Nötrler',
+      title: '3. Çekim (Declinatio III) - Cinssiz i-Gövdeliler (-e, -al, -ar)',
+      subtitle: '-e, -al, -ar ile biten Cinssiz İsimler',
       model: 'mare, maris n. (deniz)',
       forms: {
         nom: { sg: 'mare', pl: 'maria' },
@@ -150,7 +150,7 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { sg: 'mare', pl: 'maria' },
         abl: { sg: 'marī', pl: 'maribus' }
       },
-      note: 'Ablativus tekil -ī olur; Nom/Voc/Acc çoğul -ia, Gen çoğul -ium olur.'
+      note: 'Cinssiz i-gövdelilerde Ablativus tekil -ī olur; Nom/Voc/Acc çoğul -ia, Gen çoğul -ium olur.'
     },
     {
       id: 'noun_decl_4_us',
@@ -169,8 +169,8 @@ const LATIN_REFERENCE_PARADIGMS = {
     },
     {
       id: 'noun_decl_4_u',
-      title: '4. Çekim (Declinatio IV) -ū (Nötr)',
-      subtitle: '-ū, -ūs (Nötr / Neutrum)',
+      title: '4. Çekim (Declinatio IV) -ū (Cinssiz)',
+      subtitle: '-ū, -ūs (Cinssiz / Neutrum)',
       model: 'cornū, cornūs n. (boynuz, kanat)',
       forms: {
         nom: { sg: 'cornū', pl: 'cornua' },
@@ -180,7 +180,7 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { sg: 'cornū', pl: 'cornua' },
         abl: { sg: 'cornū', pl: 'cornibus' }
       },
-      note: 'Tekilde hemen hemen tüm haller -ū ile biter.'
+      note: 'Cinssizlerde tekilde hemen hemen tüm haller -ū ile biter.'
     },
     {
       id: 'noun_decl_5',
@@ -203,7 +203,7 @@ const LATIN_REFERENCE_PARADIGMS = {
     {
       id: 'adj_class_1_2',
       title: '1. ve 2. Sınıf Sıfatlar (-us, -a, -um)',
-      subtitle: 'Eril: 2. çekim (-us), Dişil: 1. çekim (-a), Nötr: 2. çekim (-um)',
+      subtitle: 'Eril: 2. çekim (-us), Dişil: 1. çekim (-a), Cinssiz: 2. çekim (-um)',
       model: 'bonus, bona, bonum (iyi)',
       singular: {
         nom: { m: 'bonus', f: 'bona', n: 'bonum' },
@@ -224,8 +224,8 @@ const LATIN_REFERENCE_PARADIGMS = {
     },
     {
       id: 'adj_class_3_two_term',
-      title: '3. Sınıf Sıfatlar - İki Sonlanışlı (-is, -e)',
-      subtitle: 'Eril/Dişil: -is, Nötr: -e (i-Kökü Çekimi)',
+      title: '3. Sınıf Sıfatlar - İki Bitimli (-is, -e)',
+      subtitle: 'Eril/Dişil: -is, Cinssiz: -e (i-Gövdesi Çekimi)',
       model: 'omnis, omne (bütün, her, tüm)',
       singular: {
         nom: { m: 'omnis', f: 'omnis', n: 'omne' },
@@ -243,12 +243,12 @@ const LATIN_REFERENCE_PARADIGMS = {
         acc: { m: 'omnēs (omnīs)', f: 'omnēs (omnīs)', n: 'omnia' },
         abl: { m: 'omnibus', f: 'omnibus', n: 'omnibus' }
       },
-      note: 'Ablativus tekilde tüm cinsler -ī alır; Nötr çoğul -ia, Gen. çoğul -ium olur.'
+      note: 'Ablativus tekilde tüm cinsler -ī alır; Cinssiz çoğul -ia, Gen. çoğul -ium olur.'
     },
     {
       id: 'adj_class_3_one_term',
-      title: '3. Sınıf Sıfatlar - Tek Sonlanışlı',
-      subtitle: 'Üç cinsiyet için Nominativus tek: -ns, -x, -r vb.',
+      title: '3. Sınıf Sıfatlar - Tek Bitimli',
+      subtitle: 'Üç cins için tek Nominativus: -ns, -x, -r vb.',
       model: 'ingēns, ingentis (devasa, muazzam)',
       singular: {
         nom: { m: 'ingēns', f: 'ingēns', n: 'ingēns' },
@@ -273,7 +273,7 @@ const LATIN_REFERENCE_PARADIGMS = {
     {
       id: 'pron_demonstrative_is',
       title: 'İşaret / 3. Şahıs Zamiri (is, ea, id)',
-      subtitle: 'o (eril), o (dişil), o (nötr)',
+      subtitle: 'o (eril), o (dişil), o (cinssiz)',
       singular: {
         nom: { m: 'is', f: 'ea', n: 'id' },
         voc: { m: '-', f: '-', n: '-' },
@@ -336,7 +336,7 @@ const LATIN_REFERENCE_PARADIGMS = {
     {
       id: 'pron_demonstrative_hic',
       title: 'İşaret Zamiri: hic, haec, hoc (bu)',
-      subtitle: 'bu (eril), bu (dişil), bu (nötr) - Yakın İşaret',
+      subtitle: 'bu (eril), bu (dişil), bu (cinssiz) - Yakın İşaret',
       singular: {
         nom: { m: 'hic', f: 'haec', n: 'hoc' },
         voc: { m: '-', f: '-', n: '-' },
@@ -357,7 +357,7 @@ const LATIN_REFERENCE_PARADIGMS = {
     {
       id: 'pron_demonstrative_ille',
       title: 'İşaret Zamiri: ille, illa, illud (şu, o)',
-      subtitle: 'şu/o (eril), şu/o (dişil), şu/o (nötr) - Uzak İşaret',
+      subtitle: 'şu/o (eril), şu/o (dişil), şu/o (cinssiz) - Uzak İşaret',
       singular: {
         nom: { m: 'ille', f: 'illa', n: 'illud' },
         voc: { m: '-', f: '-', n: '-' },
