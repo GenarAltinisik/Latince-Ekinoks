@@ -37,26 +37,6 @@ Bu platform, Belçika'daki **LASLA** (*Laboratoire d'Analyse Statistique des Lan
 
 ---
 
-## 🚀 GitHub Pages Üzerinde Yayınlama Rehberi
-
-Site tamamen statik dosyalardan (`index.html`, `css/`, `js/`, `data/`) oluştuğu için GitHub Pages üzerinde 1 dakikada yayına alınabilir:
-
-1. **GitHub'da yeni bir repository açın** (Örn: `latince-ekinoks`).
-2. Bu klasördeki tüm dosyaları o repository'ye yükleyin:
-   ```bash
-   git init
-   git add .
-   git commit -m "İlk sürüm: Latince Ekinoks"
-   git branch -M main
-   git remote add origin https://github.com/KULLANICI_ADINIZ/latince-ekinoks.git
-   git push -u origin main
-   ```
-3. GitHub reponuzda **Settings (Ayarlar) > Pages** sekmesine gidin.
-4. **Branch** kısmından `main` ve `/ (root)` seçip **Save** butonuna tıklayın.
-5. 1-2 dakika içinde siteniz `https://KULLANICI_ADINIZ.github.io/latince-ekinoks/` adresinde canlıya geçecektir!
-
----
-
 ## 💻 Bilgisayarda Yerel Olarak Çalıştırma
 
 Herhangi bir sunucu kurulumu yapmadan doğrudan `index.html` dosyasını tarayıcınızda (Chrome, Edge, Safari, Firefox) çift tıklayarak açabilirsiniz.
